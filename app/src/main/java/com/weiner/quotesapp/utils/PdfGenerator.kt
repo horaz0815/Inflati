@@ -1,285 +1,327 @@
 package com.weiner.quotesapp.utils
 
 import android.content.Context
-import com.itextpdf.kernel.colors.ColorConstants
-import com.itextpdf.kernel.colors.DeviceRgb
-import com.itextpdf.kernel.geom.PageSize
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfWriter
-import com.itextpdf.layout.Document
-import com.itextpdf.layout.borders.Border
-import com.itextpdf.layout.borders.SolidBorder
-import com.itextpdf.layout.element.Cell
-import com.itextpdf.layout.element.Paragraph
-import com.itextpdf.layout.element.Table
-import com.itextpdf.layout.property.TextAlignment
-import com.itextpdf.layout.property.UnitValue
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Typeface
+import android.graphics.pdf.PdfDocument
 import com.weiner.quotesapp.models.Quote
 import java.io.File
+import java.io.FileOutputStream
 import java.text.NumberFormat
 import java.util.*
 
 object PdfGenerator {
 
     private val currencyFormat = NumberFormat.getCurrencyInstance(Locale.GERMANY)
-    private val primaryColor = DeviceRgb(25, 118, 210) // Blue
-    private val lightGrayColor = DeviceRgb(245, 245, 245)
+    private const val PAGE_WIDTH = 595
+    private const val PAGE_HEIGHT = 842
+    private const val MARGIN = 40f
 
     fun generateQuotePdf(context: Context, quote: Quote): File {
         val fileName = "Angebot_${quote.getQuoteNumber()}.pdf"
         val file = File(context.getExternalFilesDir(null), fileName)
 
-        val pdfWriter = PdfWriter(file)
-        val pdfDocument = PdfDocument(pdfWriter)
-        val document = Document(pdfDocument, PageSize.A4)
-        document.setMargins(40f, 40f, 40f, 40f)
+        val pdfDocument = PdfDocument()
+        val pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, 1).create()
+        val page = pdfDocument.startPage(pageInfo)
+        val canvas = page.canvas
 
-        // Header - Company Info
-        addCompanyHeader(document)
+        var yPosition = MARGIN
 
-        // Quote Number and Date
-        addQuoteInfo(document, quote)
+        yPosition = drawCompanyHeader(canvas, yPosition)
+        yPosition += 20f
+        yPosition = drawQuoteInfo(canvas, yPosition, quote)
+        yPosition += 20f
+        yPosition = drawCustomerInfo(canvas, yPosition, quote)
+        yPosition += 30f
+        yPosition = drawTitle(canvas, yPosition)
+        yPosition += 20f
+        yPosition = drawItemsTable(canvas, yPosition, quote)
+        yPosition += 20f
+        yPosition = drawSummary(canvas, yPosition, quote)
+        yPosition += 30f
+        drawFooter(canvas, yPosition, quote)
 
-        // Customer Info
-        addCustomerInfo(document, quote)
+        pdfDocument.finishPage(page)
 
-        // Spacing
-        document.add(Paragraph("\n"))
+        FileOutputStream(file).use { outputStream ->
+            pdfDocument.writeTo(outputStream)
+        }
+        pdfDocument.close()
 
-        // Quote Title
-        val title = Paragraph("Angebot für Reinigungsleistungen")
-            .setFontSize(16f)
-            .setBold()
-            .setFontColor(primaryColor)
-        document.add(title)
-
-        document.add(Paragraph("\n"))
-
-        // Items Table
-        addItemsTable(document, quote)
-
-        // Spacing
-        document.add(Paragraph("\n"))
-
-        // Summary
-        addSummary(document, quote)
-
-        // Footer
-        addFooter(document, quote)
-
-        document.close()
         return file
     }
 
-    private fun addCompanyHeader(document: Document) {
-        val companyName = Paragraph("Weiner Gebäudeservice GmbH")
-            .setFontSize(20f)
-            .setBold()
-            .setFontColor(primaryColor)
+    private fun drawCompanyHeader(canvas: Canvas, startY: Float): Float {
+        var y = startY
 
-        val companyInfo = Paragraph(
-            "Musterstraße 123\n" +
-                    "12345 Musterstadt\n" +
-                    "Tel: +49 123 456789\n" +
-                    "E-Mail: info@weiner-gebaeudeservice.de"
-        )
-            .setFontSize(10f)
-            .setFontColor(ColorConstants.DARK_GRAY)
-
-        document.add(companyName)
-        document.add(companyInfo)
-
-        // Separator line
-        val separator = Paragraph("\n")
-            .setBorderBottom(SolidBorder(primaryColor, 2f))
-        document.add(separator)
-    }
-
-    private fun addQuoteInfo(document: Document, quote: Quote) {
-        val table = Table(UnitValue.createPercentArray(floatArrayOf(1f, 1f)))
-            .useAllAvailableWidth()
-
-        val quoteNumber = Paragraph("Angebotsnummer:\n${quote.getQuoteNumber()}")
-            .setFontSize(10f)
-            .setBold()
-
-        val date = Paragraph("Datum:\n${quote.getFormattedDate()}")
-            .setFontSize(10f)
-            .setTextAlignment(TextAlignment.RIGHT)
-
-        table.addCell(Cell().add(quoteNumber).setBorder(Border.NO_BORDER))
-        table.addCell(Cell().add(date).setBorder(Border.NO_BORDER))
-
-        document.add(table)
-
-        val validUntil = Paragraph("Gültig bis: ${quote.getFormattedValidUntilDate()}")
-            .setFontSize(9f)
-            .setFontColor(ColorConstants.DARK_GRAY)
-            .setItalic()
-        document.add(validUntil)
-    }
-
-    private fun addCustomerInfo(document: Document, quote: Quote) {
-        document.add(Paragraph("\n"))
-
-        val customerTitle = Paragraph("Kunde:")
-            .setFontSize(11f)
-            .setBold()
-
-        val customerInfo = Paragraph(
-            "${quote.customer.name}\n" +
-                    "${quote.customer.address}\n" +
-                    "${quote.customer.city}\n" +
-                    "E-Mail: ${quote.customer.email}\n" +
-                    "Tel: ${quote.customer.phone}"
-        )
-            .setFontSize(10f)
-
-        document.add(customerTitle)
-        document.add(customerInfo)
-    }
-
-    private fun addItemsTable(document: Document, quote: Quote) {
-        val table = Table(UnitValue.createPercentArray(floatArrayOf(3f, 2f, 1.5f, 1.5f, 2f)))
-            .useAllAvailableWidth()
-
-        // Header
-        val headers = listOf("Bereich", "Art / Fläche", "Häufigkeit", "Preis/m²", "Monatlich")
-        headers.forEach { header ->
-            table.addHeaderCell(
-                Cell()
-                    .add(Paragraph(header).setBold().setFontColor(ColorConstants.WHITE))
-                    .setBackgroundColor(primaryColor)
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setPadding(8f)
-            )
+        val titlePaint = Paint().apply {
+            color = Color.rgb(25, 118, 210)
+            textSize = 20f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            isAntiAlias = true
         }
 
-        // Items
+        val textPaint = Paint().apply {
+            color = Color.DKGRAY
+            textSize = 10f
+            isAntiAlias = true
+        }
+
+        canvas.drawText("Weiner Gebäudeservice GmbH", MARGIN, y, titlePaint)
+        y += 25f
+        canvas.drawText("Musterstraße 123", MARGIN, y, textPaint)
+        y += 15f
+        canvas.drawText("12345 Musterstadt", MARGIN, y, textPaint)
+        y += 15f
+        canvas.drawText("Tel: +49 123 456789", MARGIN, y, textPaint)
+        y += 15f
+        canvas.drawText("E-Mail: info@weiner-gebaeudeservice.de", MARGIN, y, textPaint)
+        y += 20f
+
+        val linePaint = Paint().apply {
+            color = Color.rgb(25, 118, 210)
+            strokeWidth = 2f
+        }
+        canvas.drawLine(MARGIN, y, PAGE_WIDTH - MARGIN, y, linePaint)
+
+        return y + 10f
+    }
+
+    private fun drawQuoteInfo(canvas: Canvas, startY: Float, quote: Quote): Float {
+        var y = startY
+
+        val boldPaint = Paint().apply {
+            color = Color.BLACK
+            textSize = 10f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            isAntiAlias = true
+        }
+
+        val normalPaint = Paint().apply {
+            color = Color.BLACK
+            textSize = 10f
+            isAntiAlias = true
+        }
+
+        canvas.drawText("Angebotsnummer:", MARGIN, y, boldPaint)
+        y += 15f
+        canvas.drawText(quote.getQuoteNumber(), MARGIN, y, normalPaint)
+        y += 20f
+        canvas.drawText("Datum: ${quote.getFormattedDate()}", MARGIN, y, normalPaint)
+        y += 15f
+
+        val italicPaint = Paint().apply {
+            color = Color.DKGRAY
+            textSize = 9f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
+            isAntiAlias = true
+        }
+        canvas.drawText("Gültig bis: ${quote.getFormattedValidUntilDate()}", MARGIN, y, italicPaint)
+
+        return y + 10f
+    }
+
+    private fun drawCustomerInfo(canvas: Canvas, startY: Float, quote: Quote): Float {
+        var y = startY
+
+        val boldPaint = Paint().apply {
+            color = Color.BLACK
+            textSize = 11f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            isAntiAlias = true
+        }
+
+        val normalPaint = Paint().apply {
+            color = Color.BLACK
+            textSize = 10f
+            isAntiAlias = true
+        }
+
+        canvas.drawText("Kunde:", MARGIN, y, boldPaint)
+        y += 20f
+        canvas.drawText(quote.customer.name, MARGIN, y, normalPaint)
+        y += 15f
+        canvas.drawText(quote.customer.address, MARGIN, y, normalPaint)
+        y += 15f
+        canvas.drawText(quote.customer.city, MARGIN, y, normalPaint)
+        y += 15f
+        canvas.drawText("E-Mail: ${quote.customer.email}", MARGIN, y, normalPaint)
+        y += 15f
+        canvas.drawText("Tel: ${quote.customer.phone}", MARGIN, y, normalPaint)
+
+        return y + 10f
+    }
+
+    private fun drawTitle(canvas: Canvas, startY: Float): Float {
+        val titlePaint = Paint().apply {
+            color = Color.rgb(25, 118, 210)
+            textSize = 16f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            isAntiAlias = true
+        }
+
+        canvas.drawText("Angebot für Reinigungsleistungen", MARGIN, startY, titlePaint)
+        return startY + 10f
+    }
+
+    private fun drawItemsTable(canvas: Canvas, startY: Float, quote: Quote): Float {
+        var y = startY
+
+        val headerPaint = Paint().apply {
+            color = Color.WHITE
+            textSize = 9f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            isAntiAlias = true
+        }
+
+        val headerBgPaint = Paint().apply {
+            color = Color.rgb(25, 118, 210)
+            style = Paint.Style.FILL
+        }
+
+        val textPaint = Paint().apply {
+            color = Color.BLACK
+            textSize = 9f
+            isAntiAlias = true
+        }
+
+        val cellPaint = Paint().apply {
+            color = Color.rgb(245, 245, 245)
+            style = Paint.Style.FILL
+        }
+
+        val borderPaint = Paint().apply {
+            color = Color.LTGRAY
+            strokeWidth = 1f
+        }
+
+        val rowHeight = 25f
+        canvas.drawRect(MARGIN, y, PAGE_WIDTH - MARGIN, y + rowHeight, headerBgPaint)
+
+        canvas.drawText("Bereich", MARGIN + 5f, y + 17f, headerPaint)
+        canvas.drawText("Art / Fläche", MARGIN + 150f, y + 17f, headerPaint)
+        canvas.drawText("Häufigkeit", MARGIN + 280f, y + 17f, headerPaint)
+        canvas.drawText("Preis/m²", MARGIN + 370f, y + 17f, headerPaint)
+        canvas.drawText("Monatlich", MARGIN + 450f, y + 17f, headerPaint)
+
+        y += rowHeight
+
         quote.areas.forEachIndexed { index, area ->
-            val backgroundColor = if (index % 2 == 0) ColorConstants.WHITE else lightGrayColor
+            if (index % 2 == 0) {
+                canvas.drawRect(MARGIN, y, PAGE_WIDTH - MARGIN, y + rowHeight * 1.5f, cellPaint)
+            }
 
-            table.addCell(
-                Cell()
-                    .add(Paragraph(area.name).setFontSize(10f))
-                    .setBackgroundColor(backgroundColor)
-                    .setPadding(8f)
-            )
+            canvas.drawText(area.name, MARGIN + 5f, y + 15f, textPaint)
+            canvas.drawText(area.areaType, MARGIN + 150f, y + 15f, textPaint)
+            canvas.drawText("${area.sizeInSqm} m²", MARGIN + 150f, y + 27f, textPaint)
+            canvas.drawText(area.frequency, MARGIN + 280f, y + 15f, textPaint)
+            canvas.drawText(currencyFormat.format(area.pricePerSqm), MARGIN + 370f, y + 15f, textPaint)
 
-            table.addCell(
-                Cell()
-                    .add(Paragraph("${area.areaType}\n${area.sizeInSqm} m²").setFontSize(9f))
-                    .setBackgroundColor(backgroundColor)
-                    .setPadding(8f)
-            )
+            val boldTextPaint = Paint().apply {
+                color = Color.BLACK
+                textSize = 9f
+                typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+                isAntiAlias = true
+            }
+            canvas.drawText(currencyFormat.format(area.calculateMonthlyPrice()), MARGIN + 450f, y + 15f, boldTextPaint)
 
-            table.addCell(
-                Cell()
-                    .add(Paragraph(area.frequency).setFontSize(9f))
-                    .setBackgroundColor(backgroundColor)
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setPadding(8f)
-            )
-
-            table.addCell(
-                Cell()
-                    .add(Paragraph(currencyFormat.format(area.pricePerSqm)).setFontSize(9f))
-                    .setBackgroundColor(backgroundColor)
-                    .setTextAlignment(TextAlignment.RIGHT)
-                    .setPadding(8f)
-            )
-
-            table.addCell(
-                Cell()
-                    .add(Paragraph(currencyFormat.format(area.calculateMonthlyPrice())).setFontSize(9f).setBold())
-                    .setBackgroundColor(backgroundColor)
-                    .setTextAlignment(TextAlignment.RIGHT)
-                    .setPadding(8f)
-            )
+            y += rowHeight * 1.5f
+            canvas.drawLine(MARGIN, y, PAGE_WIDTH - MARGIN, y, borderPaint)
         }
 
-        document.add(table)
+        return y + 10f
     }
 
-    private fun addSummary(document: Document, quote: Quote) {
-        val summaryTable = Table(UnitValue.createPercentArray(floatArrayOf(3f, 2f)))
-            .useAllAvailableWidth()
+    private fun drawSummary(canvas: Canvas, startY: Float, quote: Quote): Float {
+        var y = startY
 
-        // Monthly Total
-        summaryTable.addCell(
-            Cell()
-                .add(Paragraph("Monatlicher Gesamtpreis (netto)").setBold().setFontSize(11f))
-                .setBorder(Border.NO_BORDER)
-                .setTextAlignment(TextAlignment.RIGHT)
-                .setPadding(5f)
-        )
+        val labelPaint = Paint().apply {
+            color = Color.BLACK
+            textSize = 11f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            isAntiAlias = true
+        }
 
-        summaryTable.addCell(
-            Cell()
-                .add(
-                    Paragraph(currencyFormat.format(quote.calculateMonthlyTotal()))
-                        .setBold()
-                        .setFontSize(14f)
-                        .setFontColor(primaryColor)
-                )
-                .setBorder(Border.NO_BORDER)
-                .setTextAlignment(TextAlignment.RIGHT)
-                .setPadding(5f)
-        )
+        val valuePaint = Paint().apply {
+            color = Color.rgb(25, 118, 210)
+            textSize = 14f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            isAntiAlias = true
+        }
 
-        // Yearly Total
-        summaryTable.addCell(
-            Cell()
-                .add(Paragraph("Jährlicher Gesamtpreis (netto)").setFontSize(10f))
-                .setBorder(Border.NO_BORDER)
-                .setTextAlignment(TextAlignment.RIGHT)
-                .setPadding(5f)
-        )
+        val smallLabelPaint = Paint().apply {
+            color = Color.BLACK
+            textSize = 10f
+            isAntiAlias = true
+        }
 
-        summaryTable.addCell(
-            Cell()
-                .add(Paragraph(currencyFormat.format(quote.calculateYearlyTotal())).setFontSize(11f))
-                .setBorder(Border.NO_BORDER)
-                .setTextAlignment(TextAlignment.RIGHT)
-                .setPadding(5f)
-        )
+        val smallValuePaint = Paint().apply {
+            color = Color.BLACK
+            textSize = 11f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            isAntiAlias = true
+        }
 
-        document.add(summaryTable)
+        canvas.drawText("Monatlicher Gesamtpreis (netto)", MARGIN + 200f, y, labelPaint)
+        canvas.drawText(currencyFormat.format(quote.calculateMonthlyTotal()), MARGIN + 450f, y, valuePaint)
+        y += 25f
 
-        // VAT Note
-        val vatNote = Paragraph("zzgl. gesetzlicher Mehrwertsteuer")
-            .setFontSize(9f)
-            .setFontColor(ColorConstants.DARK_GRAY)
-            .setTextAlignment(TextAlignment.RIGHT)
-            .setItalic()
-        document.add(vatNote)
+        canvas.drawText("Jährlicher Gesamtpreis (netto)", MARGIN + 200f, y, smallLabelPaint)
+        canvas.drawText(currencyFormat.format(quote.calculateYearlyTotal()), MARGIN + 450f, y, smallValuePaint)
+        y += 20f
+
+        val notePaint = Paint().apply {
+            color = Color.DKGRAY
+            textSize = 9f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
+            isAntiAlias = true
+        }
+        canvas.drawText("zzgl. gesetzlicher Mehrwertsteuer", MARGIN + 200f, y, notePaint)
+
+        return y + 10f
     }
 
-    private fun addFooter(document: Document, quote: Quote) {
-        document.add(Paragraph("\n\n"))
+    private fun drawFooter(canvas: Canvas, startY: Float, quote: Quote) {
+        var y = startY + 20f
 
-        val terms = Paragraph(
-            "Allgemeine Hinweise:\n" +
-                    "• Alle Preise verstehen sich als Nettopreise zzgl. der gesetzlichen Mehrwertsteuer\n" +
-                    "• Die Reinigung erfolgt außerhalb der regulären Geschäftszeiten\n" +
-                    "• Reinigungsmaterial und -geräte werden von uns gestellt\n" +
-                    "• Vertragslaufzeit: 24 Monate mit 3-monatiger Kündigungsfrist\n" +
-                    "• Dieses Angebot ist gültig bis ${quote.getFormattedValidUntilDate()}"
+        val textPaint = Paint().apply {
+            color = Color.DKGRAY
+            textSize = 8f
+            isAntiAlias = true
+        }
+
+        val boldPaint = Paint().apply {
+            color = Color.BLACK
+            textSize = 10f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            isAntiAlias = true
+        }
+
+        canvas.drawText("Allgemeine Hinweise:", MARGIN, y, boldPaint)
+        y += 15f
+
+        val notes = listOf(
+            "• Alle Preise verstehen sich als Nettopreise zzgl. der gesetzlichen Mehrwertsteuer",
+            "• Die Reinigung erfolgt außerhalb der regulären Geschäftszeiten",
+            "• Reinigungsmaterial und -geräte werden von uns gestellt",
+            "• Vertragslaufzeit: 24 Monate mit 3-monatiger Kündigungsfrist",
+            "• Dieses Angebot ist gültig bis ${quote.getFormattedValidUntilDate()}"
         )
-            .setFontSize(8f)
-            .setFontColor(ColorConstants.DARK_GRAY)
 
-        document.add(terms)
+        notes.forEach { note ->
+            canvas.drawText(note, MARGIN, y, textPaint)
+            y += 12f
+        }
 
-        document.add(Paragraph("\n"))
+        y += 15f
 
-        val closing = Paragraph(
-            "Wir freuen uns auf eine erfolgreiche Zusammenarbeit!\n\n" +
-                    "Mit freundlichen Grüßen\n" +
-                    "Weiner Gebäudeservice GmbH"
-        )
-            .setFontSize(10f)
-
-        document.add(closing)
+        canvas.drawText("Wir freuen uns auf eine erfolgreiche Zusammenarbeit!", MARGIN, y, boldPaint)
+        y += 20f
+        canvas.drawText("Mit freundlichen Grüßen", MARGIN, y, textPaint)
+        y += 15f
+        canvas.drawText("Weiner Gebäudeservice GmbH", MARGIN, y, textPaint)
     }
 }
