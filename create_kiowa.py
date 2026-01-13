@@ -479,16 +479,16 @@ def create_logbook_sheet(aircraft_id, aircraft_idx):
           </table:table-cell>
           <table:table-cell/>
           <table:table-cell/>
-          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;{aircraft_id}.L3+SUM({aircraft_id}.C$5:{aircraft_id}.C{row_num})+INT(({aircraft_id}.M3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num}))/60))" office:value-type="string">
+          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;{aircraft_id}.L3+SUM({aircraft_id}.C$5:{aircraft_id}.C{row_num})+INT(({aircraft_id}.M3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num}))/60))">
             <text:p></text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;MOD({aircraft_id}.M3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num});60))" office:value-type="string">
+          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;MOD({aircraft_id}.M3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num});60))">
             <text:p></text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;{aircraft_id}.N3+SUM({aircraft_id}.C$5:{aircraft_id}.C{row_num})+INT(({aircraft_id}.O3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num}))/60)+{aircraft_id}.P3+INT(({aircraft_id}.O3+{aircraft_id}.Q3)/60))" office:value-type="string">
+          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;{aircraft_id}.N3+SUM({aircraft_id}.C$5:{aircraft_id}.C{row_num})+INT(({aircraft_id}.O3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num}))/60)+{aircraft_id}.P3+INT(({aircraft_id}.O3+{aircraft_id}.Q3)/60))">
             <text:p></text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;MOD({aircraft_id}.O3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num})+{aircraft_id}.Q3;60))" office:value-type="string">
+          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;MOD({aircraft_id}.O3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num})+{aircraft_id}.Q3;60))">
             <text:p></text:p>
           </table:table-cell>
           <table:table-cell table:style-name="input"/>
@@ -513,16 +513,16 @@ def create_logbook_sheet(aircraft_id, aircraft_idx):
           <table:table-cell table:style-name="remarks"/>
           <table:table-cell/>
           <table:table-cell/>
-          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;{aircraft_id}.L3+SUM({aircraft_id}.C$5:{aircraft_id}.C{row_num})+INT(({aircraft_id}.M3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num}))/60))" office:value-type="string">
+          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;{aircraft_id}.L3+SUM({aircraft_id}.C$5:{aircraft_id}.C{row_num})+INT(({aircraft_id}.M3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num}))/60))">
             <text:p></text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;MOD({aircraft_id}.M3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num});60))" office:value-type="string">
+          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;MOD({aircraft_id}.M3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num});60))">
             <text:p></text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;{aircraft_id}.N3+SUM({aircraft_id}.C$5:{aircraft_id}.C{row_num})+INT(({aircraft_id}.O3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num}))/60)+{aircraft_id}.P3+INT(({aircraft_id}.O3+{aircraft_id}.Q3)/60))" office:value-type="string">
+          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;{aircraft_id}.N3+SUM({aircraft_id}.C$5:{aircraft_id}.C{row_num})+INT(({aircraft_id}.O3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num}))/60)+{aircraft_id}.P3+INT(({aircraft_id}.O3+{aircraft_id}.Q3)/60))">
             <text:p></text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;MOD({aircraft_id}.O3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num})+{aircraft_id}.Q3;60))" office:value-type="string">
+          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;MOD({aircraft_id}.O3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num})+{aircraft_id}.Q3;60))">
             <text:p></text:p>
           </table:table-cell>
           <table:table-cell table:style-name="input"/>
