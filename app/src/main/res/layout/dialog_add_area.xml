@@ -27,7 +27,7 @@
             android:hint="@string/area_name"
             android:inputType="text"
             android:textColor="@color/white"
-            android:textColorHint="@color/text_secondary" />
+            android:textColorHint="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -43,7 +43,7 @@
             android:hint="@string/area_size"
             android:inputType="numberDecimal"
             android:textColor="@color/white"
-            android:textColorHint="@color/text_secondary" />
+            android:textColorHint="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -53,7 +53,7 @@
         android:layout_marginTop="8dp"
         android:hint="@string/area_type"
         app:boxStrokeColor="@color/primary"
-        app:hintTextColor="@color/primary">
+        app:hintTextColor="@color/white">
 
         <AutoCompleteTextView
             android:id="@+id/spinnerAreaType"
@@ -70,7 +70,7 @@
         android:layout_marginTop="8dp"
         android:hint="@string/frequency"
         app:boxStrokeColor="@color/primary"
-        app:hintTextColor="@color/primary">
+        app:hintTextColor="@color/white">
 
         <AutoCompleteTextView
             android:id="@+id/spinnerFrequency"
@@ -93,7 +93,7 @@
             android:hint="@string/price_per_sqm"
             android:inputType="numberDecimal"
             android:textColor="@color/white"
-            android:textColorHint="@color/text_secondary" />
+            android:textColorHint="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
