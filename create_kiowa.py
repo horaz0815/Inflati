@@ -783,23 +783,57 @@ def create_steuerung_sheet():
     return sheet_xml
 
 
+def calculate_next_maintenance(current_lsn_hh, current_lsn_mm, interval):
+    """Berechnet die nächste fällige Wartung basierend auf aktuellem LSN"""
+    current_total_hours = current_lsn_hh + (current_lsn_mm / 60)
+
+    # Nächstes Vielfaches des Intervalls finden
+    next_maintenance = ((int(current_total_hours) // interval) + 1) * interval
+
+    # In HH:MM umwandeln
+    next_hh = next_maintenance
+    next_mm = 0
+
+    return next_hh, next_mm
+
+
 def create_wartungen_sheet():
-    """Erstellt das WARTUNGEN-Blatt mit Military Design"""
-    sheet_xml = '''      <table:table table:name="WARTUNGEN" table:style-name="ta1">
+    """Erstellt das WARTUNGEN-Blatt mit automatischer Intervall-Berechnung"""
+
+    # Wartungsintervalle in Stunden
+    maintenance_intervals = {
+        '25WE': 25,
+        '50WE': 50,
+        '75WE': 75,
+        '100WE': 100,
+        '300WE': 300,
+        'GÜ (1200WE)': 1200
+    }
+
+    sheet_xml = f'''      <table:table table:name="WARTUNGEN" table:style-name="ta1">
         <!-- Titel -->
         <table:table-row>
-          <table:table-cell table:number-columns-spanned="10" table:style-name="title" office:value-type="string">
+          <table:table-cell table:number-columns-spanned="{len(FLEET)+1}" table:style-name="title" office:value-type="string">
             <text:p>🔧 WARTUNGEN - INTERVALL-ÜBERSICHT</text:p>
           </table:table-cell>
         </table:table-row>
 
+        <!-- Info-Zeile -->
+        <table:table-row>
+          <table:table-cell table:number-columns-spanned="{len(FLEET)+1}" table:style-name="remarks" office:value-type="string">
+            <text:p>Anzeige der nächsten fälligen Wartung basierend auf aktuellem LSN-Stand</text:p>
+          </table:table-cell>
+        </table:table-row>
+
+        <!-- Header -->
         <table:table-row>
           <table:table-cell table:style-name="header" office:value-type="string">
-            <text:p>LSN-Stufe</text:p>
+            <text:p>Wartungstyp</text:p>
           </table:table-cell>
 '''
 
-    for aircraft in FLEET[:6]:
+    # Header mit allen Hubschraubern
+    for aircraft in FLEET:
         sheet_xml += f'''          <table:table-cell table:style-name="aircraft_id" office:value-type="string">
             <text:p>{aircraft}</text:p>
           </table:table-cell>
@@ -807,15 +841,38 @@ def create_wartungen_sheet():
     sheet_xml += '''        </table:table-row>
 '''
 
-    for lsn in range(0, 501, 25):
+    # Zeilen für jeden Wartungstyp
+    for maintenance_type, interval in maintenance_intervals.items():
         sheet_xml += f'''        <table:table-row>
-          <table:table-cell table:style-name="header" office:value-type="float" office:value="{lsn}">
-            <text:p>{lsn}h</text:p>
+          <table:table-cell table:style-name="header_green" office:value-type="string">
+            <text:p>{maintenance_type}</text:p>
           </table:table-cell>
 '''
-        for _ in range(6):
-            sheet_xml += '''          <table:table-cell table:style-name="calculated"/>
+
+        # Für jeden Hubschrauber die nächste fällige Wartung berechnen
+        for aircraft in FLEET:
+            vortrag = DEMO_VORTRAG[aircraft]
+            next_hh, next_mm = calculate_next_maintenance(
+                vortrag['zelle_hh'],
+                vortrag['zelle_mm'],
+                interval
+            )
+
+            # Differenz zum aktuellen Stand berechnen
+            current_total = vortrag['zelle_hh'] + (vortrag['zelle_mm'] / 60)
+            diff = next_hh - current_total
+
+            # Farbkodierung: Warnung wenn < 50h
+            if diff < 50:
+                style = 'warning'
+            else:
+                style = 'lsn_display'
+
+            sheet_xml += f'''          <table:table-cell table:style-name="{style}" office:value-type="string">
+            <text:p>{next_hh}:00 ({int(diff)}h)</text:p>
+          </table:table-cell>
 '''
+
         sheet_xml += '        </table:table-row>\n'
 
     sheet_xml += '      </table:table>\n'
@@ -823,7 +880,18 @@ def create_wartungen_sheet():
 
 
 def create_we_kw_sheet():
-    """Erstellt das WE KW-Blatt mit Military Design"""
+    """Erstellt das WE KW-Blatt mit Hubschrauber-zentrierter Ansicht"""
+
+    # Wartungsintervalle
+    maintenance_intervals = {
+        '25WE': 25,
+        '50WE': 50,
+        '75WE': 75,
+        '100WE': 100,
+        '300WE': 300,
+        'GÜ (1200WE)': 1200
+    }
+
     sheet_xml = '''      <table:table table:name="WE KW" table:style-name="ta1">
         <!-- Titel -->
         <table:table-row>
@@ -832,18 +900,40 @@ def create_we_kw_sheet():
           </table:table-cell>
         </table:table-row>
 
+        <!-- Info-Zeile -->
         <table:table-row>
-          <table:table-cell table:style-name="header" office:value-type="string">
-            <text:p>KW</text:p>
+          <table:table-cell table:number-columns-spanned="5" table:style-name="remarks" office:value-type="string">
+            <text:p>Planung der Wartungen: KW-Spalte editierbar für Terminplanung</text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="header" office:value-type="string">
-            <text:p>Kennzeichen</text:p>
+        </table:table-row>
+'''
+
+    # Für jeden Hubschrauber einen Block
+    for aircraft in FLEET:
+        vortrag = DEMO_VORTRAG[aircraft]
+
+        # Hubschrauber-Header
+        sheet_xml += f'''
+        <!-- {aircraft} Block -->
+        <table:table-row>
+          <table:table-cell table:number-columns-spanned="5" table:style-name="aircraft_id" office:value-type="string">
+            <text:p>{aircraft} - Aktueller LSN: {vortrag['zelle_hh']}:{vortrag['zelle_mm']:02d}</text:p>
           </table:table-cell>
+        </table:table-row>
+
+        <!-- Sub-Header -->
+        <table:table-row>
           <table:table-cell table:style-name="header" office:value-type="string">
             <text:p>Wartungstyp</text:p>
           </table:table-cell>
           <table:table-cell table:style-name="header" office:value-type="string">
-            <text:p>LSN Soll</text:p>
+            <text:p>Fällig bei LSN</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="header" office:value-type="string">
+            <text:p>Differenz</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="header_green" office:value-type="string">
+            <text:p>Geplante KW</text:p>
           </table:table-cell>
           <table:table-cell table:style-name="header" office:value-type="string">
             <text:p>Bemerkungen</text:p>
@@ -851,45 +941,43 @@ def create_we_kw_sheet():
         </table:table-row>
 '''
 
-    # Einige Demo-Wartungen eintragen
-    demo_wartungen = [
-        (12, '3C-OA', '100WE', '7500', 'Planmäßige Wartung'),
-        (15, '3C-OD', '50WE', '7700', ''),
-        (18, '3C-OH', '100WE', '7900', 'Nach Inspektion'),
-        (24, '3C-OB', '75WE', '7600', ''),
-    ]
+        # Wartungszeilen für diesen Hubschrauber
+        for maintenance_type, interval in maintenance_intervals.items():
+            next_hh, next_mm = calculate_next_maintenance(
+                vortrag['zelle_hh'],
+                vortrag['zelle_mm'],
+                interval
+            )
 
-    for kw in range(1, 54):
-        wartung = next((w for w in demo_wartungen if w[0] == kw), None)
+            current_total = vortrag['zelle_hh'] + (vortrag['zelle_mm'] / 60)
+            diff = next_hh - current_total
 
-        if wartung:
+            # Farbkodierung basierend auf Dringlichkeit
+            if diff < 25:
+                lsn_style = 'warning'
+            elif diff < 50:
+                lsn_style = 'warning'
+            else:
+                lsn_style = 'lsn_display'
+
             sheet_xml += f'''        <table:table-row>
-          <table:table-cell table:style-name="header" office:value-type="float" office:value="{kw}">
-            <text:p>KW {kw:02d}</text:p>
+          <table:table-cell table:style-name="header_green" office:value-type="string">
+            <text:p>{maintenance_type}</text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="input" office:value-type="string">
-            <text:p>{wartung[1]}</text:p>
+          <table:table-cell table:style-name="{lsn_style}" office:value-type="string">
+            <text:p>{next_hh}:00</text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="input" office:value-type="string">
-            <text:p>{wartung[2]}</text:p>
+          <table:table-cell table:style-name="calculated" office:value-type="string">
+            <text:p>{int(diff)}h</text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="number" office:value-type="string">
-            <text:p>{wartung[3]}</text:p>
-          </table:table-cell>
-          <table:table-cell table:style-name="remarks" office:value-type="string">
-            <text:p>{wartung[4]}</text:p>
-          </table:table-cell>
+          <table:table-cell table:style-name="input"/>
+          <table:table-cell table:style-name="remarks"/>
         </table:table-row>
 '''
-        else:
-            sheet_xml += f'''        <table:table-row>
-          <table:table-cell table:style-name="header" office:value-type="float" office:value="{kw}">
-            <text:p>KW {kw:02d}</text:p>
-          </table:table-cell>
-          <table:table-cell table:style-name="input"/>
-          <table:table-cell table:style-name="input"/>
-          <table:table-cell table:style-name="number"/>
-          <table:table-cell table:style-name="remarks"/>
+
+        # Leerzeile zwischen Hubschraubern
+        sheet_xml += '''        <table:table-row>
+          <table:table-cell/>
         </table:table-row>
 '''
 
