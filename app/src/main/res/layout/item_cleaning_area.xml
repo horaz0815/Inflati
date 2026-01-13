@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/primary_dark">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Bereichsname"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -44,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="Typ • Fläche • Häufigkeit"
-            android:textColor="@color/text_secondary"
+            android:textColor="@color/white"
             android:textSize="14sp" />
 
         <LinearLayout
@@ -58,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Monatlich:"
-                android:textColor="@color/text_secondary"
+                android:textColor="@color/white"
                 android:textSize="14sp" />
 
             <TextView
@@ -66,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="€ 0,00"
-                android:textColor="@color/primary"
+                android:textColor="@color/accent"
                 android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>
