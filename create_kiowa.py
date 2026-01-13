@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-KIOWA Flottensteuerung V47 - Military Modern Edition
+KIOWA Flottensteuerung V47 - Military Modern Edition mit Demo-Daten
 Generiert eine LibreOffice Calc Datei für die Überwachung von Flugzeug-Flotten
 Design: Military Modern Style mit abgestimmter Farbpalette
+Demo: Mit realistischen Beispieldaten befüllt
 """
 
 from zipfile import ZipFile
 from datetime import datetime
-import xml.etree.ElementTree as ET
+import random
 
 # Flotte: 12 aktive Einheiten (3C-OF und 3C-OG werden ignoriert)
 FLEET = ['3C-OA', '3C-OB', '3C-OC', '3C-OD', '3C-OE', '3C-OH',
@@ -24,26 +25,100 @@ WARTUNGSTYPEN = ['25WE', '50WE', '75WE', '100WE', '300WE', '1200WE']
 
 # Military Modern Color Palette
 COLORS = {
-    'dark_slate': '#2C3E50',      # Dunkles Schiefergrau - Haupt-Header
-    'military_green': '#4A5D23',  # Militär-Grün - Wichtige Header
-    'olive': '#556B2F',           # Olivgrün - Sekundäre Elemente
-    'steel_gray': '#5D6D7E',      # Stahlgrau - Berechnete Werte
-    'light_gray': '#ECF0F1',      # Hellgrau - Eingabefelder
-    'warning_orange': '#D35400',  # Warnorange - Warnungen
-    'danger_red': '#C0392B',      # Gefahr-Rot - Kritische Warnungen
-    'success_green': '#27AE60',   # Erfolg-Grün - Positive Werte
-    'dark_green': '#1E8449',      # Dunkelgrün - Summen
-    'charcoal': '#34495E',        # Anthrazit - Alternative Header
-    'sand': '#D7DBDD',            # Sand - Alternative Eingabe
-    'black': '#1C2833',           # Schwarz - Text auf hellen Hintergründen
-    'white': '#FFFFFF',           # Weiß - Text auf dunklen Hintergründen
-    'amber': '#F39C12',           # Bernstein - Vortrag/Wichtig
+    'dark_slate': '#2C3E50',
+    'military_green': '#4A5D23',
+    'olive': '#556B2F',
+    'steel_gray': '#5D6D7E',
+    'light_gray': '#ECF0F1',
+    'warning_orange': '#D35400',
+    'danger_red': '#C0392B',
+    'success_green': '#27AE60',
+    'dark_green': '#1E8449',
+    'charcoal': '#34495E',
+    'sand': '#D7DBDD',
+    'black': '#1C2833',
+    'white': '#FFFFFF',
+    'amber': '#F39C12',
 }
+
+# Demo-Daten: Vortragswerte für jedes Flugzeug (LSN ab 7000h)
+DEMO_VORTRAG = {
+    '3C-OA': {'zelle_hh': 7245, 'zelle_mm': 30, 'tw_hh': 7245, 'tw_mm': 30},
+    '3C-OB': {'zelle_hh': 7512, 'zelle_mm': 15, 'tw_hh': 7512, 'tw_mm': 15},
+    '3C-OC': {'zelle_hh': 7089, 'zelle_mm': 45, 'tw_hh': 7089, 'tw_mm': 45},
+    '3C-OD': {'zelle_hh': 7678, 'zelle_mm': 20, 'tw_hh': 7678, 'tw_mm': 20},
+    '3C-OE': {'zelle_hh': 7334, 'zelle_mm': 50, 'tw_hh': 7334, 'tw_mm': 50},
+    '3C-OH': {'zelle_hh': 7891, 'zelle_mm': 10, 'tw_hh': 7891, 'tw_mm': 10},
+    '3C-OI': {'zelle_hh': 7156, 'zelle_mm': 35, 'tw_hh': 7156, 'tw_mm': 35},
+    '3C-OJ': {'zelle_hh': 7423, 'zelle_mm': 25, 'tw_hh': 7423, 'tw_mm': 25},
+    '3C-OK': {'zelle_hh': 7767, 'zelle_mm': 40, 'tw_hh': 7767, 'tw_mm': 40},
+    '3C-OL': {'zelle_hh': 7201, 'zelle_mm': 55, 'tw_hh': 7201, 'tw_mm': 55},
+    'RES1': {'zelle_hh': 7045, 'zelle_mm': 5, 'tw_hh': 7045, 'tw_mm': 5},
+    'RES2': {'zelle_hh': 7598, 'zelle_mm': 48, 'tw_hh': 7598, 'tw_mm': 48},
+}
+
+# Demo-Bemerkungen
+DEMO_REMARKS = [
+    'Routineflug',
+    'Übungsflug',
+    'VFR Navigation',
+    'Platzrunden',
+    'Checkflug',
+    'Schulungsflug',
+    'SAR-Einsatz',
+    'Patrouillenflug',
+    'Nachtflug',
+    'IFR Training',
+    '',
+    '',
+    '',
+]
+
+
+def generate_demo_flight_data(day_index, aircraft_idx):
+    """Generiert Demo-Flugdaten für einen Tag"""
+    # Nicht jeden Tag fliegen (ca. 60% der Tage)
+    if random.random() > 0.6:
+        return None
+
+    # Realistische Flugzeiten
+    flight_hours = random.randint(1, 4)
+    flight_minutes = random.choice([0, 15, 30, 45])
+
+    # Landungen basierend auf Flugzeit
+    landings = random.randint(2, min(6, flight_hours + 2))
+
+    # Cycles entsprechen ungefähr Landungen
+    cycles = landings + random.randint(-1, 1)
+
+    # Kraftstoff (ca. 150-250 Liter pro Stunde)
+    fuel_per_hour = random.randint(150, 250)
+    total_fuel = int(fuel_per_hour * (flight_hours + flight_minutes/60))
+
+    # 80% Inland, 20% Ausland
+    if random.random() < 0.8:
+        fuel_inl = total_fuel
+        fuel_ausl = 0
+    else:
+        fuel_inl = 0
+        fuel_ausl = total_fuel
+
+    # Bemerkung (manchmal)
+    remark = random.choice(DEMO_REMARKS) if random.random() < 0.3 else ''
+
+    return {
+        'hh': flight_hours,
+        'mm': flight_minutes,
+        'ldg': landings,
+        'cyc': cycles,
+        'fuel_inl': fuel_inl,
+        'fuel_ausl': fuel_ausl,
+        'remark': remark
+    }
 
 
 def get_military_styles():
     """Erstellt das Styles-XML mit Military Modern Design"""
-
     return '''<?xml version="1.0" encoding="UTF-8"?>
 <office:document-styles xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
                         xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0"
@@ -62,7 +137,6 @@ def get_military_styles():
 
 def get_content_styles():
     """Erstellt die Content-Styles mit Military Modern Design"""
-
     return f'''  <office:automatic-styles>
     <!-- Main Header Style - Dark Slate -->
     <style:style style:name="header" style:family="table-cell">
@@ -218,8 +292,10 @@ def get_content_styles():
   </office:automatic-styles>'''
 
 
-def create_logbook_sheet(aircraft_id):
-    """Erstellt ein Logbuch-Blatt für ein Flugzeug mit Military Design"""
+def create_logbook_sheet(aircraft_id, aircraft_idx):
+    """Erstellt ein Logbuch-Blatt für ein Flugzeug mit Military Design und Demo-Daten"""
+
+    vortrag = DEMO_VORTRAG[aircraft_id]
 
     sheet_xml = f'''      <table:table table:name="{aircraft_id}" table:style-name="ta1">
         <!-- Titel-Zeile -->
@@ -281,8 +357,8 @@ def create_logbook_sheet(aircraft_id):
         </table:table-row>
 '''
 
-    # Zeile 3: Übertrag (manuell einzutragen) - VORTRAG in Bernstein
-    sheet_xml += '''        <table:table-row>
+    # Zeile 3: Übertrag mit Demo-Werten
+    sheet_xml += f'''        <table:table-row>
           <table:table-cell table:style-name="vortrag" office:value-type="string">
             <text:p>⚠ ÜBERTRAG</text:p>
           </table:table-cell>
@@ -296,17 +372,17 @@ def create_logbook_sheet(aircraft_id):
           <table:table-cell table:style-name="vortrag"/>
           <table:table-cell/>
           <table:table-cell/>
-          <table:table-cell table:style-name="number" office:value-type="float" office:value="0">
-            <text:p>0</text:p>
+          <table:table-cell table:style-name="number" office:value-type="float" office:value="{vortrag['zelle_hh']}">
+            <text:p>{vortrag['zelle_hh']}</text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="number" office:value-type="float" office:value="0">
-            <text:p>0</text:p>
+          <table:table-cell table:style-name="number" office:value-type="float" office:value="{vortrag['zelle_mm']}">
+            <text:p>{vortrag['zelle_mm']}</text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="number" office:value-type="float" office:value="0">
-            <text:p>0</text:p>
+          <table:table-cell table:style-name="number" office:value-type="float" office:value="{vortrag['tw_hh']}">
+            <text:p>{vortrag['tw_hh']}</text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="number" office:value-type="float" office:value="0">
-            <text:p>0</text:p>
+          <table:table-cell table:style-name="number" office:value-type="float" office:value="{vortrag['tw_mm']}">
+            <text:p>{vortrag['tw_mm']}</text:p>
           </table:table-cell>
           <table:table-cell table:style-name="number" office:value-type="float" office:value="0">
             <text:p>0</text:p>
@@ -317,7 +393,7 @@ def create_logbook_sheet(aircraft_id):
         </table:table-row>
 '''
 
-    # Zeile 4: SUMME mit Formeln - in Dunkelgrün
+    # Zeile 4: SUMME mit Formeln
     sheet_xml += f'''        <table:table-row>
           <table:table-cell table:style-name="summe" office:value-type="string">
             <text:p>✓ SUMME</text:p>
@@ -361,11 +437,67 @@ def create_logbook_sheet(aircraft_id):
         </table:table-row>
 '''
 
-    # Datumszeilen für alle 365 Tage
+    # Datumszeilen mit Demo-Daten für die ersten 2 Monate
     row_num = 5
-    for month_name, days in MONTHS:
+    day_counter = 0
+
+    for month_idx, (month_name, days) in enumerate(MONTHS):
         for day in range(1, days + 1):
-            sheet_xml += f'''        <table:table-row>
+            # Demo-Daten nur für erste 2 Monate generieren
+            flight_data = None
+            if month_idx < 2:  # Januar und Februar
+                flight_data = generate_demo_flight_data(day_counter, aircraft_idx)
+
+            if flight_data:
+                sheet_xml += f'''        <table:table-row>
+          <table:table-cell table:style-name="date" office:value-type="string">
+            <text:p>{month_name}</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="date" office:value-type="float" office:value="{day}">
+            <text:p>{day}</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="input" office:value-type="float" office:value="{flight_data['hh']}">
+            <text:p>{flight_data['hh']}</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="input" office:value-type="float" office:value="{flight_data['mm']}">
+            <text:p>{flight_data['mm']}</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="input" office:value-type="float" office:value="{flight_data['ldg']}">
+            <text:p>{flight_data['ldg']}</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="input" office:value-type="float" office:value="{flight_data['cyc']}">
+            <text:p>{flight_data['cyc']}</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="input" office:value-type="float" office:value="{flight_data['fuel_inl']}">
+            <text:p>{flight_data['fuel_inl']}</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="input" office:value-type="float" office:value="{flight_data['fuel_ausl']}">
+            <text:p>{flight_data['fuel_ausl']}</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="remarks" office:value-type="string">
+            <text:p>{flight_data['remark']}</text:p>
+          </table:table-cell>
+          <table:table-cell/>
+          <table:table-cell/>
+          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;{aircraft_id}.L3+SUM({aircraft_id}.C$5:{aircraft_id}.C{row_num})+INT(({aircraft_id}.M3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num}))/60))" office:value-type="string">
+            <text:p></text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;MOD({aircraft_id}.M3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num});60))" office:value-type="string">
+            <text:p></text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;{aircraft_id}.N3+SUM({aircraft_id}.C$5:{aircraft_id}.C{row_num})+INT(({aircraft_id}.O3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num}))/60)+{aircraft_id}.P3+INT(({aircraft_id}.O3+{aircraft_id}.Q3)/60))" office:value-type="string">
+            <text:p></text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="calculated" table:formula="of:=IF({aircraft_id}.C{row_num}=&quot;&quot;;&quot;&quot;;MOD({aircraft_id}.O3+SUM({aircraft_id}.D$5:{aircraft_id}.D{row_num})+{aircraft_id}.Q3;60))" office:value-type="string">
+            <text:p></text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="input"/>
+          <table:table-cell table:style-name="input"/>
+        </table:table-row>
+'''
+            else:
+                # Leere Zeile
+                sheet_xml += f'''        <table:table-row>
           <table:table-cell table:style-name="date" office:value-type="string">
             <text:p>{month_name}</text:p>
           </table:table-cell>
@@ -398,6 +530,7 @@ def create_logbook_sheet(aircraft_id):
         </table:table-row>
 '''
             row_num += 1
+            day_counter += 1
 
     sheet_xml += '      </table:table>\n'
     return sheet_xml
@@ -405,7 +538,6 @@ def create_logbook_sheet(aircraft_id):
 
 def create_overview_sheet():
     """Erstellt das OVERVIEW-Blatt mit Military Design"""
-
     sheet_xml = '''      <table:table table:name="OVERVIEW" table:style-name="ta1">
         <!-- Titel -->
         <table:table-row>
@@ -458,20 +590,28 @@ def create_overview_sheet():
         </table:table-row>
 '''
 
+    standorte = ['WELS', 'LINZ', 'SALZBURG', 'INNSBRUCK', 'WELS', 'LINZ',
+                 'SALZBURG', 'WELS', 'INNSBRUCK', 'WELS', 'WELS', 'WELS']
+    flugklarheit = ['VB', 'VB', 'VB', 'BEB', 'VB', 'VB', 'VB', 'VUB', 'VB', 'VB', 'VB', 'VB']
+
     row_num = 3
-    for aircraft in FLEET:
+    for idx, aircraft in enumerate(FLEET):
         sheet_xml += f'''        <table:table-row>
           <table:table-cell table:style-name="aircraft_id" office:value-type="string">
             <text:p>{aircraft}</text:p>
           </table:table-cell>
           <table:table-cell table:style-name="input" office:value-type="string">
-            <text:p>VB</text:p>
+            <text:p>{flugklarheit[idx]}</text:p>
           </table:table-cell>
           <table:table-cell table:style-name="warning" table:formula="of:=IF(TODAY()-DATE(2024;1;1)&gt;14;&quot;BDL&quot;;&quot;&quot;)" office:value-type="string">
             <text:p></text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="input"/>
-          <table:table-cell table:style-name="input"/>
+          <table:table-cell table:style-name="input" office:value-type="string">
+            <text:p>STD</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="input" office:value-type="string">
+            <text:p>{standorte[idx]}</text:p>
+          </table:table-cell>
           <table:table-cell table:style-name="lsn_display" table:formula="of:={aircraft}.L4&amp;&quot;:&quot;&amp;TEXT({aircraft}.M4;&quot;00&quot;)" office:value-type="string">
             <text:p>0:00</text:p>
           </table:table-cell>
@@ -494,7 +634,6 @@ def create_overview_sheet():
 
 def create_statistik_sheet():
     """Erstellt das STATISTIK-Blatt mit Military Design"""
-
     sheet_xml = '''      <table:table table:name="STATISTIK" table:style-name="ta1">
         <!-- Titel -->
         <table:table-row>
@@ -512,7 +651,6 @@ def create_statistik_sheet():
           </table:table-cell>
 '''
 
-    # Spalten für jeden Monat + Jahressumme
     for month_name, _ in MONTHS:
         sheet_xml += f'''          <table:table-cell table:style-name="month_header" office:value-type="string">
             <text:p>{month_name[:3].upper()}</text:p>
@@ -524,9 +662,7 @@ def create_statistik_sheet():
         </table:table-row>
 '''
 
-    # Für jedes Flugzeug einen 8-Zeilen-Block
     for aircraft in FLEET:
-        # Zeile 1: Flugzeit HH
         sheet_xml += f'''        <table:table-row>
           <table:table-cell table:style-name="aircraft_id" office:value-type="string">
             <text:p>{aircraft}</text:p>
@@ -542,7 +678,6 @@ def create_statistik_sheet():
 '''
         sheet_xml += '        </table:table-row>\n'
 
-        # Weitere Zeilen
         for param in ['Flugzeit MM', 'Landungen', 'Cycles', 'Fuel-INL', 'Fuel-AUSL', 'TW-LSN Monatsende']:
             sheet_xml += f'''        <table:table-row>
           <table:table-cell/>
@@ -557,13 +692,11 @@ def create_statistik_sheet():
 '''
             sheet_xml += '        </table:table-row>\n'
 
-        # Leerzeile
         sheet_xml += '''        <table:table-row>
           <table:table-cell/>
         </table:table-row>
 '''
 
-    # Flotten-Gesamtsumme
     sheet_xml += '''        <table:table-row>
           <table:table-cell table:style-name="summe" office:value-type="string">
             <text:p>FLOTTE GESAMT</text:p>
@@ -580,13 +713,11 @@ def create_statistik_sheet():
     sheet_xml += '''        </table:table-row>
       </table:table>
 '''
-
     return sheet_xml
 
 
 def create_steuerung_sheet():
     """Erstellt das STEUERUNG-Blatt mit Military Design"""
-
     sheet_xml = '''      <table:table table:name="STEUERUNG" table:style-name="ta1">
         <!-- Titel -->
         <table:table-row>
@@ -613,39 +744,37 @@ def create_steuerung_sheet():
           </table:table-cell>
 '''
 
-    # Spalten für Monatssoll
     for month_name, _ in MONTHS:
         sheet_xml += f'''          <table:table-cell table:style-name="month_header" office:value-type="string">
             <text:p>{month_name[:3].upper()} Soll</text:p>
           </table:table-cell>
 '''
-
     sheet_xml += '''        </table:table-row>
 '''
 
-    # Zeilen für jedes Flugzeug
     for aircraft in FLEET:
+        vortrag = DEMO_VORTRAG[aircraft]
         sheet_xml += f'''        <table:table-row>
           <table:table-cell table:style-name="aircraft_id" office:value-type="string">
             <text:p>{aircraft}</text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="number" office:value-type="float" office:value="0">
-            <text:p>0</text:p>
+          <table:table-cell table:style-name="number" office:value-type="float" office:value="{vortrag['zelle_hh']}">
+            <text:p>{vortrag['zelle_hh']}</text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="number" office:value-type="float" office:value="0">
-            <text:p>0</text:p>
+          <table:table-cell table:style-name="number" office:value-type="float" office:value="{vortrag['zelle_mm']}">
+            <text:p>{vortrag['zelle_mm']}</text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="number" office:value-type="float" office:value="0">
-            <text:p>0</text:p>
+          <table:table-cell table:style-name="number" office:value-type="float" office:value="{vortrag['tw_hh']}">
+            <text:p>{vortrag['tw_hh']}</text:p>
           </table:table-cell>
-          <table:table-cell table:style-name="number" office:value-type="float" office:value="0">
-            <text:p>0</text:p>
+          <table:table-cell table:style-name="number" office:value-type="float" office:value="{vortrag['tw_mm']}">
+            <text:p>{vortrag['tw_mm']}</text:p>
           </table:table-cell>
 '''
-        # Monatssoll-Werte
+        # Monatssoll-Werte (50h pro Monat als Demo)
         for _ in range(12):
-            sheet_xml += '''          <table:table-cell table:style-name="input" office:value-type="float" office:value="0">
-            <text:p>0</text:p>
+            sheet_xml += '''          <table:table-cell table:style-name="input" office:value-type="float" office:value="50">
+            <text:p>50</text:p>
           </table:table-cell>
 '''
         sheet_xml += '        </table:table-row>\n'
@@ -656,7 +785,6 @@ def create_steuerung_sheet():
 
 def create_wartungen_sheet():
     """Erstellt das WARTUNGEN-Blatt mit Military Design"""
-
     sheet_xml = '''      <table:table table:name="WARTUNGEN" table:style-name="ta1">
         <!-- Titel -->
         <table:table-row>
@@ -671,17 +799,14 @@ def create_wartungen_sheet():
           </table:table-cell>
 '''
 
-    # Spalten für jedes Flugzeug (vereinfacht, nur ein paar)
     for aircraft in FLEET[:6]:
         sheet_xml += f'''          <table:table-cell table:style-name="aircraft_id" office:value-type="string">
             <text:p>{aircraft}</text:p>
           </table:table-cell>
 '''
-
     sheet_xml += '''        </table:table-row>
 '''
 
-    # Zeilen für LSN-Stufen (25h Schritte, nur bis 500h zur Demo)
     for lsn in range(0, 501, 25):
         sheet_xml += f'''        <table:table-row>
           <table:table-cell table:style-name="header" office:value-type="float" office:value="{lsn}">
@@ -699,7 +824,6 @@ def create_wartungen_sheet():
 
 def create_we_kw_sheet():
     """Erstellt das WE KW-Blatt mit Military Design"""
-
     sheet_xml = '''      <table:table table:name="WE KW" table:style-name="ta1">
         <!-- Titel -->
         <table:table-row>
@@ -727,9 +851,38 @@ def create_we_kw_sheet():
         </table:table-row>
 '''
 
-    # Zeilen für Kalenderwochen 1-53
+    # Einige Demo-Wartungen eintragen
+    demo_wartungen = [
+        (12, '3C-OA', '100WE', '7500', 'Planmäßige Wartung'),
+        (15, '3C-OD', '50WE', '7700', ''),
+        (18, '3C-OH', '100WE', '7900', 'Nach Inspektion'),
+        (24, '3C-OB', '75WE', '7600', ''),
+    ]
+
     for kw in range(1, 54):
-        sheet_xml += f'''        <table:table-row>
+        wartung = next((w for w in demo_wartungen if w[0] == kw), None)
+
+        if wartung:
+            sheet_xml += f'''        <table:table-row>
+          <table:table-cell table:style-name="header" office:value-type="float" office:value="{kw}">
+            <text:p>KW {kw:02d}</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="input" office:value-type="string">
+            <text:p>{wartung[1]}</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="input" office:value-type="string">
+            <text:p>{wartung[2]}</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="number" office:value-type="string">
+            <text:p>{wartung[3]}</text:p>
+          </table:table-cell>
+          <table:table-cell table:style-name="remarks" office:value-type="string">
+            <text:p>{wartung[4]}</text:p>
+          </table:table-cell>
+        </table:table-row>
+'''
+        else:
+            sheet_xml += f'''        <table:table-row>
           <table:table-cell table:style-name="header" office:value-type="float" office:value="{kw}">
             <text:p>KW {kw:02d}</text:p>
           </table:table-cell>
@@ -745,11 +898,13 @@ def create_we_kw_sheet():
 
 
 def create_kiowa_ods(filename="KIOWA_V47.ods"):
-    """Hauptfunktion: Erstellt die KIOWA ODS-Datei mit Military Modern Design"""
+    """Hauptfunktion: Erstellt die KIOWA ODS-Datei mit Military Modern Design und Demo-Daten"""
 
-    print("🚁 Erstelle KIOWA Flottensteuerung V47 - MILITARY MODERN EDITION...")
+    print("🚁 Erstelle KIOWA Flottensteuerung V47 - MILITARY MODERN EDITION mit Demo-Daten...")
 
-    # Basis-XML-Strukturen
+    # Seed für reproduzierbare Demo-Daten
+    random.seed(42)
+
     mimetype = "application/vnd.oasis.opendocument.spreadsheet"
 
     manifest = '''<?xml version="1.0" encoding="UTF-8"?>
@@ -769,7 +924,7 @@ def create_kiowa_ods(filename="KIOWA_V47.ods"):
   <office:meta>
     <meta:generator>KIOWA Generator V47 - Military Modern Edition</meta:generator>
     <dc:title>KIOWA V47 Flottensteuerung - Military Modern</dc:title>
-    <dc:description>Flottenüberwachung für 12 Luftfahrzeuge - Military Modern Design</dc:description>
+    <dc:description>Flottenüberwachung für 12 Luftfahrzeuge - Military Modern Design mit Demo-Daten</dc:description>
     <dc:date>{datetime.now().isoformat()}</dc:date>
   </office:meta>
 </office:document-meta>'''
@@ -783,7 +938,6 @@ def create_kiowa_ods(filename="KIOWA_V47.ods"):
 
     styles = get_military_styles()
 
-    # Content-Header mit Military Styles
     content = '''<?xml version="1.0" encoding="UTF-8"?>
 <office:document-content xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
                          xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0"
@@ -795,19 +949,17 @@ def create_kiowa_ods(filename="KIOWA_V47.ods"):
 '''
 
     content += get_content_styles()
-
     content += '''  <office:body>
     <office:spreadsheet>
 '''
 
-    # Sheets generieren
     print("\n  ✓ Erstelle OVERVIEW (Kommandozentrale)...")
     content += create_overview_sheet()
 
-    print("  ✓ Erstelle Einzelblätter für Flotte...")
-    for aircraft in FLEET:
-        content += create_logbook_sheet(aircraft)
-        print(f"    - {aircraft}")
+    print("  ✓ Erstelle Einzelblätter mit Demo-Daten...")
+    for idx, aircraft in enumerate(FLEET):
+        content += create_logbook_sheet(aircraft, idx)
+        print(f"    - {aircraft} (LSN: {DEMO_VORTRAG[aircraft]['zelle_hh']}:{DEMO_VORTRAG[aircraft]['zelle_mm']:02d})")
 
     print("  ✓ Erstelle STATISTIK...")
     content += create_statistik_sheet()
@@ -821,12 +973,10 @@ def create_kiowa_ods(filename="KIOWA_V47.ods"):
     print("  ✓ Erstelle WE KW...")
     content += create_we_kw_sheet()
 
-    # Content-Footer
     content += '''    </office:spreadsheet>
   </office:body>
 </office:document-content>'''
 
-    # ODS-Datei erstellen
     print(f"\n  ✓ Schreibe {filename}...")
     with ZipFile(filename, 'w') as ods:
         ods.writestr('mimetype', mimetype)
@@ -843,13 +993,13 @@ def create_kiowa_ods(filename="KIOWA_V47.ods"):
     print(f"   - Erfolgsfarben: Dunkelgrün")
     print(f"   - Moderne Typography mit Liberation Sans/Mono")
     print(f"   - Professionelle Rahmen und Padding")
-    print(f"\n📊 System-Übersicht:")
-    print(f"   - OVERVIEW (Kommandozentrale)")
-    print(f"   - 12 Einzelblätter (Logbücher)")
-    print(f"   - STATISTIK (Aggregation)")
-    print(f"   - STEUERUNG (Sollwerte)")
-    print(f"   - WARTUNGEN (Wartungsintervalle)")
-    print(f"   - WE KW (Terminplanung)")
+    print(f"\n📊 DEMO-DATEN:")
+    print(f"   - Alle Hubschrauber: LSN ab 7000h")
+    print(f"   - Flugdaten für Januar & Februar eingetragen")
+    print(f"   - Realistische Flugzeiten, Landungen, Kraftstoff")
+    print(f"   - Standorte: WELS, LINZ, SALZBURG, INNSBRUCK")
+    print(f"   - Wartungsplanung mit 4 Einträgen")
+    print(f"   - Monatssoll: 50h pro Maschine")
 
     return filename
 
