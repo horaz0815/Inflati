@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Angebots-Rechner</string>
+    <string name="company_name">Weiner Gebäudeservice GmbH</string>
+
+    <!-- Customer Info -->
+    <string name="customer_info">Kundendaten</string>
+    <string name="customer_name">Kundenname</string>
+    <string name="customer_address">Adresse</string>
+    <string name="customer_city">PLZ / Ort</string>
+    <string name="customer_email">E-Mail</string>
+    <string name="customer_phone">Telefon</string>
+
+    <!-- Cleaning Areas -->
+    <string name="cleaning_areas">Reinigungsbereiche</string>
+    <string name="add_area">Bereich hinzufügen</string>
+    <string name="area_name">Bereichsname</string>
+    <string name="number_of_workers">Anzahl Arbeiter</string>
+    <string name="hours_per_session">Arbeitsstunden</string>
+    <string name="area_type">Art der Reinigung</string>
+    <string name="frequency">Häufigkeit</string>
+    <string name="price_per_hour">Preis pro Stunde (€)</string>
+
+    <!-- Area Types -->
+    <string-array name="area_types">
+        <item>Bürofläche</item>
+        <item>Sanitärbereich</item>
+        <item>Treppenhäuser</item>
+        <item>Glasflächen</item>
+        <item>Sonderreinigung</item>
+    </string-array>
+
+    <!-- Frequencies -->
+    <string-array name="frequencies">
+        <item>Täglich</item>
+        <item>3x pro Woche</item>
+        <item>2x pro Woche</item>
+        <item>Wöchentlich</item>
+        <item>14-tägig</item>
+        <item>Monatlich</item>
+    </string-array>
+
+    <!-- Actions -->
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="delete">Löschen</string>
+    <string name="generate_quote">Angebot erstellen</string>
+    <string name="send_email">Per E-Mail senden</string>
+    <string name="preview_pdf">Vorschau</string>
+
+    <!-- Quote -->
+    <string name="quote_summary">Angebotszusammenfassung</string>
+    <string name="monthly_total">Monatlicher Gesamtpreis</string>
+    <string name="yearly_total">Jährlicher Gesamtpreis</string>
+
+    <!-- Messages -->
+    <string name="area_added">Bereich hinzugefügt</string>
+    <string name="area_deleted">Bereich gelöscht</string>
+    <string name="fill_all_fields">Bitte alle Felder ausfüllen</string>
+    <string name="pdf_generated">PDF erfolgreich erstellt</string>
+    <string name="email_sent">E-Mail gesendet</string>
+    <string name="error">Fehler aufgetreten</string>
+</resources>
