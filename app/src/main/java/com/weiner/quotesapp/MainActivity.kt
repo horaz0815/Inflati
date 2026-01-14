@@ -101,10 +101,10 @@ class MainActivity : AppCompatActivity() {
         val frequencies = resources.getStringArray(R.array.frequencies)
 
         spinnerAreaType.setAdapter(
-            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, areaTypes)
+            ArrayAdapter(this, R.layout.dropdown_item, areaTypes)
         )
         spinnerFrequency.setAdapter(
-            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, frequencies)
+            ArrayAdapter(this, R.layout.dropdown_item, frequencies)
         )
 
         btnSave.setOnClickListener {
