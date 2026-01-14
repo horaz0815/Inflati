@@ -1,9 +1,11 @@
 package com.weiner.quotesapp
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
@@ -107,6 +109,17 @@ class MainActivity : AppCompatActivity() {
         spinnerFrequency.setAdapter(
             ArrayAdapter(this, R.layout.dropdown_item, frequencies)
         )
+
+        // Hide keyboard when dropdowns are tapped
+        spinnerAreaType.setOnClickListener {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        }
+
+        spinnerFrequency.setOnClickListener {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        }
 
         btnSave.setOnClickListener {
             val name = editAreaName.text?.toString() ?: ""
