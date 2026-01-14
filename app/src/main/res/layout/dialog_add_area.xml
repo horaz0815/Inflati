@@ -37,10 +37,26 @@
         android:layout_marginTop="8dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editAreaSize"
+            android:id="@+id/editNumberOfWorkers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/area_size"
+            android:hint="@string/number_of_workers"
+            android:inputType="number"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/TextInputLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editHoursPerSession"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hours_per_session"
             android:inputType="numberDecimal"
             android:textColor="@color/white"
             android:textColorHint="@color/white" />
@@ -87,10 +103,10 @@
         android:layout_marginTop="8dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editPricePerSqm"
+            android:id="@+id/editPricePerHour"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/price_per_sqm"
+            android:hint="@string/price_per_hour"
             android:inputType="numberDecimal"
             android:textColor="@color/white"
             android:textColorHint="@color/white" />

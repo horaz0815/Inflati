@@ -7,14 +7,16 @@ import kotlinx.parcelize.Parcelize
 data class CleaningArea(
     val id: String = java.util.UUID.randomUUID().toString(),
     var name: String = "",
-    var sizeInSqm: Double = 0.0,
+    var numberOfWorkers: Int = 0,
+    var hoursPerSession: Double = 0.0,
     var areaType: String = "",
     var frequency: String = "",
-    var pricePerSqm: Double = 0.0
+    var pricePerHour: Double = 0.0
 ) : Parcelable {
 
     /**
      * Berechnet den monatlichen Preis für diesen Bereich
+     * Formel: Anzahl Arbeiter × Stunden × Preis/Stunde × Häufigkeitsfaktor
      */
     fun calculateMonthlyPrice(): Double {
         val frequencyMultiplier = when (frequency) {
@@ -27,14 +29,15 @@ data class CleaningArea(
             else -> 1.0
         }
 
-        return sizeInSqm * pricePerSqm * frequencyMultiplier
+        return numberOfWorkers * hoursPerSession * pricePerHour * frequencyMultiplier
     }
 
     fun isValid(): Boolean {
         return name.isNotBlank() &&
-               sizeInSqm > 0 &&
+               numberOfWorkers > 0 &&
+               hoursPerSession > 0 &&
                areaType.isNotBlank() &&
                frequency.isNotBlank() &&
-               pricePerSqm > 0
+               pricePerHour > 0
     }
 }

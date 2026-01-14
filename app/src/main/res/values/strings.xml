@@ -15,10 +15,11 @@
     <string name="cleaning_areas">Reinigungsbereiche</string>
     <string name="add_area">Bereich hinzufügen</string>
     <string name="area_name">Bereichsname</string>
-    <string name="area_size">Fläche (m²)</string>
+    <string name="number_of_workers">Anzahl Arbeiter</string>
+    <string name="hours_per_session">Arbeitsstunden</string>
     <string name="area_type">Art der Reinigung</string>
     <string name="frequency">Häufigkeit</string>
-    <string name="price_per_sqm">Preis pro m²</string>
+    <string name="price_per_hour">Preis pro Stunde (€)</string>
 
     <!-- Area Types -->
     <string-array name="area_types">

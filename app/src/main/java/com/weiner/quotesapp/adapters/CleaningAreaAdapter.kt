@@ -35,7 +35,7 @@ class CleaningAreaAdapter(
         val area = areas[position]
 
         holder.txtAreaName.text = area.name
-        holder.txtAreaDetails.text = "${area.areaType} • ${area.sizeInSqm} m² • ${area.frequency}"
+        holder.txtAreaDetails.text = "${area.areaType} • ${area.numberOfWorkers} Arb. • ${area.hoursPerSession}h • ${area.frequency}"
         holder.txtMonthlyPrice.text = currencyFormat.format(area.calculateMonthlyPrice())
 
         holder.btnDelete.setOnClickListener {

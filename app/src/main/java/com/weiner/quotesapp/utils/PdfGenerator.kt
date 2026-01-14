@@ -202,10 +202,11 @@ object PdfGenerator {
         canvas.drawRect(MARGIN, y, PAGE_WIDTH - MARGIN, y + rowHeight, headerBgPaint)
 
         canvas.drawText("Bereich", MARGIN + 5f, y + 17f, headerPaint)
-        canvas.drawText("Art / Fläche", MARGIN + 150f, y + 17f, headerPaint)
-        canvas.drawText("Häufigkeit", MARGIN + 280f, y + 17f, headerPaint)
-        canvas.drawText("Preis/m²", MARGIN + 370f, y + 17f, headerPaint)
-        canvas.drawText("Monatlich", MARGIN + 450f, y + 17f, headerPaint)
+        canvas.drawText("Art", MARGIN + 130f, y + 17f, headerPaint)
+        canvas.drawText("Arb. × Std.", MARGIN + 220f, y + 17f, headerPaint)
+        canvas.drawText("Häufigkeit", MARGIN + 310f, y + 17f, headerPaint)
+        canvas.drawText("€/Std.", MARGIN + 410f, y + 17f, headerPaint)
+        canvas.drawText("Monatlich", MARGIN + 460f, y + 17f, headerPaint)
 
         y += rowHeight
 
@@ -215,10 +216,10 @@ object PdfGenerator {
             }
 
             canvas.drawText(area.name, MARGIN + 5f, y + 15f, textPaint)
-            canvas.drawText(area.areaType, MARGIN + 150f, y + 15f, textPaint)
-            canvas.drawText("${area.sizeInSqm} m²", MARGIN + 150f, y + 27f, textPaint)
-            canvas.drawText(area.frequency, MARGIN + 280f, y + 15f, textPaint)
-            canvas.drawText(currencyFormat.format(area.pricePerSqm), MARGIN + 370f, y + 15f, textPaint)
+            canvas.drawText(area.areaType, MARGIN + 130f, y + 15f, textPaint)
+            canvas.drawText("${area.numberOfWorkers} × ${area.hoursPerSession}h", MARGIN + 220f, y + 15f, textPaint)
+            canvas.drawText(area.frequency, MARGIN + 310f, y + 15f, textPaint)
+            canvas.drawText(currencyFormat.format(area.pricePerHour), MARGIN + 410f, y + 15f, textPaint)
 
             val boldTextPaint = Paint().apply {
                 color = Color.BLACK
@@ -226,7 +227,7 @@ object PdfGenerator {
                 typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
                 isAntiAlias = true
             }
-            canvas.drawText(currencyFormat.format(area.calculateMonthlyPrice()), MARGIN + 450f, y + 15f, boldTextPaint)
+            canvas.drawText(currencyFormat.format(area.calculateMonthlyPrice()), MARGIN + 460f, y + 15f, boldTextPaint)
 
             y += rowHeight * 1.5f
             canvas.drawLine(MARGIN, y, PAGE_WIDTH - MARGIN, y, borderPaint)

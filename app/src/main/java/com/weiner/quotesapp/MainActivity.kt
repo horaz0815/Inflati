@@ -89,10 +89,11 @@ class MainActivity : AppCompatActivity() {
         )
 
         val editAreaName = dialog.findViewById<TextInputEditText>(R.id.editAreaName)
-        val editAreaSize = dialog.findViewById<TextInputEditText>(R.id.editAreaSize)
+        val editNumberOfWorkers = dialog.findViewById<TextInputEditText>(R.id.editNumberOfWorkers)
+        val editHoursPerSession = dialog.findViewById<TextInputEditText>(R.id.editHoursPerSession)
         val spinnerAreaType = dialog.findViewById<AutoCompleteTextView>(R.id.spinnerAreaType)
         val spinnerFrequency = dialog.findViewById<AutoCompleteTextView>(R.id.spinnerFrequency)
-        val editPricePerSqm = dialog.findViewById<TextInputEditText>(R.id.editPricePerSqm)
+        val editPricePerHour = dialog.findViewById<TextInputEditText>(R.id.editPricePerHour)
         val btnSave = dialog.findViewById<MaterialButton>(R.id.btnSave)
         val btnCancel = dialog.findViewById<MaterialButton>(R.id.btnCancel)
 
@@ -109,22 +110,24 @@ class MainActivity : AppCompatActivity() {
 
         btnSave.setOnClickListener {
             val name = editAreaName.text?.toString() ?: ""
-            val size = editAreaSize.text?.toString()?.toDoubleOrNull() ?: 0.0
+            val workers = editNumberOfWorkers.text?.toString()?.toIntOrNull() ?: 0
+            val hours = editHoursPerSession.text?.toString()?.toDoubleOrNull() ?: 0.0
             val type = spinnerAreaType.text?.toString() ?: ""
             val frequency = spinnerFrequency.text?.toString() ?: ""
-            val price = editPricePerSqm.text?.toString()?.toDoubleOrNull() ?: 0.0
+            val pricePerHour = editPricePerHour.text?.toString()?.toDoubleOrNull() ?: 0.0
 
-            if (name.isBlank() || size <= 0 || type.isBlank() || frequency.isBlank() || price <= 0) {
+            if (name.isBlank() || workers <= 0 || hours <= 0 || type.isBlank() || frequency.isBlank() || pricePerHour <= 0) {
                 Toast.makeText(this, R.string.fill_all_fields, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             val area = CleaningArea(
                 name = name,
-                sizeInSqm = size,
+                numberOfWorkers = workers,
+                hoursPerSession = hours,
                 areaType = type,
                 frequency = frequency,
-                pricePerSqm = price
+                pricePerHour = pricePerHour
             )
 
             areaAdapter.addArea(area)
