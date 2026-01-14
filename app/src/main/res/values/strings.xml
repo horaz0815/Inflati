@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Weiner Angebote</string>
+    <string name="app_name">Angebots-Rechner</string>
     <string name="company_name">Weiner Gebäudeservice GmbH</string>
 
     <!-- Customer Info -->
