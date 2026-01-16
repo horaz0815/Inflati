@@ -31,11 +31,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
 
       - name: 📦 Install Dependencies
         run: |
-          npm ci
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
           pip3 install Pillow
 
       - name: 🎨 Create Assets
