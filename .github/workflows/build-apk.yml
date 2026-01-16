@@ -1,0 +1,105 @@
+name: Build Android APK
+
+on:
+  # Manueller Trigger über GitHub UI
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Build Profile'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - preview
+          - production
+
+  # Automatischer Build bei Push auf main/master
+  push:
+    branches:
+      - main
+      - master
+      - claude/meal-plan-app-*
+    tags:
+      - 'v*'
+
+  # Pull Request Builds
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛎 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci
+
+      - name: 🎨 Create Assets
+        run: |
+          # Installiere Pillow für Python Asset-Generierung
+          pip3 install Pillow
+          python3 create-simple-assets.py || ./create-minimal-assets.sh
+          ls -la assets/
+
+      - name: 🔐 Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📱 Build Android APK
+        run: |
+          # Bestimme Build-Profile
+          PROFILE="${{ github.event.inputs.profile }}"
+          if [ -z "$PROFILE" ]; then
+            PROFILE="preview"
+          fi
+
+          echo "Building with profile: $PROFILE"
+          eas build --platform android --profile $PROFILE --non-interactive --no-wait
+
+      - name: 📊 Get Build Status
+        id: build-status
+        run: |
+          # Warte auf Build-Completion und hole Build-URL
+          echo "Checking build status..."
+          # Dies ist ein vereinfachtes Beispiel
+          # In Produktion würde man auf Build-Completion warten
+          echo "build_url=https://expo.dev/" >> $GITHUB_OUTPUT
+
+      - name: 📝 Comment on PR (if PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 APK Build gestartet!\n\nStatus: ${{ steps.build-status.outputs.build_url }}'
+            })
+
+      - name: 📢 Build Summary
+        run: |
+          echo "### 🎉 Build gestartet!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Der APK-Build läuft jetzt in der Expo Cloud." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Nächste Schritte:**" >> $GITHUB_STEP_SUMMARY
+          echo "1. Gehen Sie zu https://expo.dev/" >> $GITHUB_STEP_SUMMARY
+          echo "2. Navigieren Sie zu 'Builds'" >> $GITHUB_STEP_SUMMARY
+          echo "3. Warten Sie 10-15 Minuten" >> $GITHUB_STEP_SUMMARY
+          echo "4. Laden Sie die APK herunter" >> $GITHUB_STEP_SUMMARY

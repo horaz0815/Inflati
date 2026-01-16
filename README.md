@@ -1,6 +1,25 @@
 # Speiseplan App
 
+[![Build APK](https://github.com/horaz0815/Inflati/actions/workflows/build-apk.yml/badge.svg)](https://github.com/horaz0815/Inflati/actions/workflows/build-apk.yml)
+[![Release APK](https://github.com/horaz0815/Inflati/actions/workflows/release-apk.yml/badge.svg)](https://github.com/horaz0815/Inflati/actions/workflows/release-apk.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Eine moderne Cross-Platform Mobile App für Android und iOS zur Anzeige von wöchentlichen Speiseplänen mit militärischem Design.
+
+## 🚀 Quick Start
+
+### APK direkt herunterladen
+- **[Neuester Release](https://github.com/horaz0815/Inflati/releases/latest)** - APK für Android
+- **[Alle Releases](https://github.com/horaz0815/Inflati/releases)** - Versionshistorie
+
+### APK selbst bauen
+- **[Lokaler Build](./JETZT_APK_BAUEN.md)** - APK auf Ihrem Computer bauen
+- **[GitHub Actions Build](./GITHUB_APK_SCHNELLSTART.md)** - APK automatisch auf GitHub bauen
+- **[Expo Go Test](./EXPO_GO_ANLEITUNG.md)** - Sofort testen ohne Build
+
+### Setup & Konfiguration
+- **[Firebase Setup](./FIREBASE_SETUP.md)** - Backend konfigurieren (erforderlich!)
+- **[Schnellstart Guide](./QUICKSTART.md)** - In 5 Minuten loslegen
 
 ## Features
 
