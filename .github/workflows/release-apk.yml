@@ -1,0 +1,172 @@
+name: Release APK to GitHub
+
+on:
+  # Manueller Release-Build
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (z.B. 1.0.0)'
+        required: true
+        default: '1.0.0'
+      release_notes:
+        description: 'Release Notes'
+        required: false
+        default: 'Neue Version der Speiseplan-App'
+
+  # Automatischer Release bei Version-Tags
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-release:
+    name: Build and Release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛎 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 📦 Install Dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+          pip3 install Pillow
+
+      - name: 🎨 Create Assets
+        run: |
+          python3 create-simple-assets.py || ./create-minimal-assets.sh
+          ls -la assets/
+
+      - name: 🔐 Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📱 Build APK
+        id: build
+        run: |
+          echo "🚀 Starte APK Build..."
+
+          # Build starten
+          eas build --platform android --profile production --non-interactive --json > build-output.json
+
+          # Build ID extrahieren
+          BUILD_ID=$(cat build-output.json | jq -r '.[0].id')
+          echo "build_id=$BUILD_ID" >> $GITHUB_OUTPUT
+          echo "Build ID: $BUILD_ID"
+
+      - name: ⏳ Wait for Build Completion
+        id: wait
+        run: |
+          BUILD_ID="${{ steps.build.outputs.build_id }}"
+          echo "Warte auf Build-Completion für ID: $BUILD_ID"
+
+          # Warte maximal 30 Minuten
+          for i in {1..60}; do
+            sleep 30
+            STATUS=$(eas build:view $BUILD_ID --json | jq -r '.status')
+            echo "Build Status: $STATUS (Check $i/60)"
+
+            if [ "$STATUS" = "finished" ]; then
+              echo "✅ Build erfolgreich!"
+              APK_URL=$(eas build:view $BUILD_ID --json | jq -r '.artifacts.buildUrl')
+              echo "apk_url=$APK_URL" >> $GITHUB_OUTPUT
+              exit 0
+            elif [ "$STATUS" = "errored" ] || [ "$STATUS" = "canceled" ]; then
+              echo "❌ Build fehlgeschlagen: $STATUS"
+              exit 1
+            fi
+          done
+
+          echo "⏱️ Timeout nach 30 Minuten"
+          exit 1
+
+      - name: 📥 Download APK
+        run: |
+          APK_URL="${{ steps.wait.outputs.apk_url }}"
+          echo "Lade APK herunter von: $APK_URL"
+          wget -O speiseplan-app.apk "$APK_URL"
+          ls -lh speiseplan-app.apk
+
+      - name: 📝 Extract Version
+        id: version
+        run: |
+          if [ "${{ github.event.inputs.version }}" != "" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          elif [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          else
+            VERSION="1.0.0-$(git rev-parse --short HEAD)"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: 🏷️ Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Speiseplan-App v${{ steps.version.outputs.version }}
+          body: |
+            ## 📱 Speiseplan-App v${{ steps.version.outputs.version }}
+
+            ${{ github.event.inputs.release_notes || 'Neue Version der Speiseplan-App' }}
+
+            ### 📥 Installation
+
+            1. Laden Sie die APK herunter (siehe "Assets" unten)
+            2. Übertragen Sie die APK auf Ihr Android-Smartphone
+            3. Öffnen Sie die APK-Datei
+            4. Erlauben Sie "Installation aus unbekannten Quellen"
+            5. Installieren Sie die App
+
+            ### ⚙️ Erste Schritte
+
+            **WICHTIG:** Die App benötigt Firebase-Konfiguration!
+
+            Siehe [FIREBASE_SETUP.md](https://github.com/${{ github.repository }}/blob/${{ github.sha }}/FIREBASE_SETUP.md)
+
+            ### 📋 Was ist neu?
+
+            - Militärisches Design-Theme
+            - Kalenderwochen-basierte Speiseplan-Anzeige
+            - Admin-Bereich mit Kamera-Upload
+            - Firebase Integration
+            - Google AdMob Unterstützung
+
+            ### 🐛 Bekannte Probleme
+
+            - Firebase muss manuell konfiguriert werden
+            - AdMob benötigt eigene Konto-Konfiguration
+
+            ---
+
+            **Build Information:**
+            - Commit: ${{ github.sha }}
+            - Branch: ${{ github.ref_name }}
+            - Build Date: ${{ github.event.head_commit.timestamp }}
+          files: speiseplan-app.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📢 Success Summary
+        run: |
+          echo "### 🎉 Release erfolgreich erstellt!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** v${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Download:** [Releases](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.version }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Die APK kann jetzt heruntergeladen und installiert werden!" >> $GITHUB_STEP_SUMMARY
