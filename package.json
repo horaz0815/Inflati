@@ -6,7 +6,11 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "create-assets": "bash create-assets.sh",
+    "build:preview": "eas build --platform android --profile preview",
+    "build:production": "eas build --platform android --profile production",
+    "build:all": "eas build --platform all --profile preview"
   },
   "dependencies": {
     "expo": "~50.0.0",
