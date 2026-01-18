@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Militär Gehaltsrechner</string>
+    <string name="title">Österreichisches Bundesheer</string>
+    <string name="subtitle">Gehaltsrechner 2025</string>
+    <string name="verwendungsgruppe">Verwendungsgruppe</string>
+    <string name="gehaltsstufe">Gehaltsstufe</string>
+    <string name="funktionsgruppe">Funktionsgruppe</string>
+    <string name="funktionsstufe">Funktionsstufe</string>
+    <string name="berechnen">Gehalt berechnen</string>
+    <string name="grundgehalt">Grundgehalt</string>
+    <string name="funktionszulage">Funktionszulage</string>
+    <string name="gesamtgehalt">Gesamtgehalt brutto/Monat</string>
+    <string name="waehlen">Bitte wählen...</string>
+    <string name="keine">Keine</string>
+    <string name="euro">€</string>
+
+    <string-array name="verwendungsgruppen">
+        <item>Bitte wählen...</item>
+        <item>M1 - Berufsoffiziere</item>
+        <item>M2 - Berufsunteroffiziere</item>
+        <item>M3 - Chargen</item>
+    </string-array>
+
+    <string-array name="gehaltsstufen">
+        <item>Bitte wählen...</item>
+        <item>Stufe 1</item>
+        <item>Stufe 2</item>
+        <item>Stufe 3</item>
+        <item>Stufe 4</item>
+        <item>Stufe 5</item>
+        <item>Stufe 6</item>
+        <item>Stufe 7</item>
+        <item>Stufe 8</item>
+    </string-array>
+
+    <string-array name="funktionsgruppen">
+        <item>Keine</item>
+        <item>F1 - Gruppenkommandant</item>
+        <item>F2 - Zugführer</item>
+        <item>F3 - Kompaniechef</item>
+        <item>F4 - Bataillonskommandant</item>
+        <item>F5 - Regimentskommandant</item>
+    </string-array>
+
+    <string-array name="funktionsstufen">
+        <item>Keine</item>
+        <item>Stufe 1</item>
+        <item>Stufe 2</item>
+        <item>Stufe 3</item>
+    </string-array>
+</resources>
