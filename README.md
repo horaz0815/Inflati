@@ -20,7 +20,7 @@ Eine vollständige Android-App zur Berechnung von Gehältern für österreichisc
 
 ### Features:
 - Verwendungsgruppen: M1, M2, M3
-- Gehaltsstufen: 1-8
+- Gehaltsstufen: 1-19 plus daz und DAZ
 - Funktionszulagen: F1-F5
 - Automatische Gehaltsberechnung
 - Benutzerfreundliches UI

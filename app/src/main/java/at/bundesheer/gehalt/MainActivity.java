@@ -47,6 +47,10 @@ public class MainActivity extends AppCompatActivity {
     private void initializeSalaryData() {
         salaryData = new HashMap<>();
 
+        // HINWEIS: Dies sind BEISPIELDATEN!
+        // Bitte ersetzen Sie diese mit den aktuellen offiziellen Werten von:
+        // https://www.goed.at/themen/gehaltstabellen-2025/militaerischer-dienst
+
         // M1 - Berufsoffiziere (Professional Officers)
         Map<Integer, Double> m1Salaries = new HashMap<>();
         m1Salaries.put(1, 2850.50);
@@ -57,6 +61,19 @@ public class MainActivity extends AppCompatActivity {
         m1Salaries.put(6, 4485.70);
         m1Salaries.put(7, 4895.40);
         m1Salaries.put(8, 5335.80);
+        m1Salaries.put(9, 5550.00);
+        m1Salaries.put(10, 5775.00);
+        m1Salaries.put(11, 6010.00);
+        m1Salaries.put(12, 6255.00);
+        m1Salaries.put(13, 6510.00);
+        m1Salaries.put(14, 6775.00);
+        m1Salaries.put(15, 7050.00);
+        m1Salaries.put(16, 7335.00);
+        m1Salaries.put(17, 7630.00);
+        m1Salaries.put(18, 7935.00);
+        m1Salaries.put(19, 8250.00);
+        m1Salaries.put(20, 8500.00); // daz
+        m1Salaries.put(21, 8800.00); // DAZ
         salaryData.put("M1", m1Salaries);
 
         // M2 - Berufsunteroffiziere (Professional NCOs)
@@ -69,6 +86,19 @@ public class MainActivity extends AppCompatActivity {
         m2Salaries.put(6, 3750.50);
         m2Salaries.put(7, 4095.80);
         m2Salaries.put(8, 4465.20);
+        m2Salaries.put(9, 4655.00);
+        m2Salaries.put(10, 4855.00);
+        m2Salaries.put(11, 5065.00);
+        m2Salaries.put(12, 5285.00);
+        m2Salaries.put(13, 5515.00);
+        m2Salaries.put(14, 5755.00);
+        m2Salaries.put(15, 6005.00);
+        m2Salaries.put(16, 6265.00);
+        m2Salaries.put(17, 6535.00);
+        m2Salaries.put(18, 6815.00);
+        m2Salaries.put(19, 7105.00);
+        m2Salaries.put(20, 7350.00); // daz
+        m2Salaries.put(21, 7650.00); // DAZ
         salaryData.put("M2", m2Salaries);
 
         // M3 - Chargen (Enlisted ranks)
@@ -81,6 +111,19 @@ public class MainActivity extends AppCompatActivity {
         m3Salaries.put(6, 3185.40);
         m3Salaries.put(7, 3485.70);
         m3Salaries.put(8, 3805.30);
+        m3Salaries.put(9, 3975.00);
+        m3Salaries.put(10, 4155.00);
+        m3Salaries.put(11, 4345.00);
+        m3Salaries.put(12, 4545.00);
+        m3Salaries.put(13, 4755.00);
+        m3Salaries.put(14, 4975.00);
+        m3Salaries.put(15, 5205.00);
+        m3Salaries.put(16, 5445.00);
+        m3Salaries.put(17, 5695.00);
+        m3Salaries.put(18, 5955.00);
+        m3Salaries.put(19, 6225.00);
+        m3Salaries.put(20, 6450.00); // daz
+        m3Salaries.put(21, 6725.00); // DAZ
         salaryData.put("M3", m3Salaries);
 
         // Function allowances
@@ -205,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Extract usage group code (M1, M2, M3)
         String verwendungsKey = extractCode(spinnerVerwendungsgruppe.getSelectedItem().toString());
-        int gehaltsstufe = gehaltPosition; // Stufe 1-8
+        int gehaltsstufe = gehaltPosition; // Position 1-19 = Stufe 1-19, Position 20 = daz, Position 21 = DAZ
 
         // Get basic salary
         double grundgehalt = 0.0;

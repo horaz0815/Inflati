@@ -13,10 +13,20 @@ Eine Android-Anwendung zur Berechnung von Gehältern für österreichisches Bund
 
 Detaillierte Anleitung: Siehe [APK_DOWNLOAD_ANLEITUNG.md](APK_DOWNLOAD_ANLEITUNG.md)
 
+## ⚠️ Wichtiger Hinweis
+
+**Die App verwendet BEISPIELDATEN!** Die Gehaltswerte in der App sind Platzhalter und müssen mit den **aktuellen offiziellen Werten** ersetzt werden.
+
+Bitte holen Sie sich die korrekten Gehaltsdaten von:
+- [GÖD Gehaltstabellen 2025 - Militärischer Dienst](https://www.goed.at/themen/gehaltstabellen-2025/militaerischer-dienst)
+
+Anleitung zum Anpassen der Daten: Siehe Abschnitt "Anpassung der Gehaltstabellen" weiter unten.
+
 ## Features
 
 - **Verwendungsgruppen-Auswahl**: M1 (Berufsoffiziere), M2 (Berufsunteroffiziere), M3 (Chargen)
-- **Gehaltsstufen**: Stufen 1-8 für jede Verwendungsgruppe
+- **Gehaltsstufen**: Stufen 1-19 für jede Verwendungsgruppe
+- **Dienstalterzulagen**: daz (kleine Dienstalterzulage) und DAZ (große Dienstalterzulage)
 - **Funktionszulagen**: F1-F5 mit jeweils 3 Funktionsstufen
 - **Automatische Berechnung**: Grundgehalt + Funktionszulage = Gesamtgehalt
 - **Benutzerfreundliche Oberfläche**: Grünes Theme passend zum Bundesheer
@@ -25,8 +35,8 @@ Detaillierte Anleitung: Siehe [APK_DOWNLOAD_ANLEITUNG.md](APK_DOWNLOAD_ANLEITUNG
 
 Die App enthält alle vom Benutzer geforderten Eingabefelder:
 
-1. **Verwendungsgruppe** - Auswahl der Grund- bzw. Vorrückungslaufbahn
-2. **Gehaltsstufe** - Stufen 1-8
+1. **Verwendungsgruppe** - Auswahl der Grund- bzw. Vorrückungslaufbahn (M1, M2, M3)
+2. **Gehaltsstufe** - Stufen 1-19, plus daz (kleine Dienstalterzulage) und DAZ (große Dienstalterzulage)
 3. **Funktionsgruppe** - Auswahl der Funktionszulage (F1-F5 oder Keine)
 4. **Funktionsstufe** - Stufen 1-3 (nur wenn Funktionsgruppe ausgewählt)
 
@@ -147,6 +157,8 @@ Inflati/
 
 ## Anpassung der Gehaltstabellen
 
+⚠️ **WICHTIG**: Ersetzen Sie die Beispieldaten mit den offiziellen Werten!
+
 Um die Gehaltsdaten zu aktualisieren, bearbeiten Sie die Datei:
 `app/src/main/java/at/bundesheer/gehalt/MainActivity.java`
 
@@ -156,13 +168,25 @@ In der Methode `initializeSalaryData()` können Sie die Werte anpassen:
 private void initializeSalaryData() {
     salaryData = new HashMap<>();
 
-    // M1 - Berufsoffiziere anpassen
-    Map<Integer, Double> m1Salaries = new HashMap<>();
-    m1Salaries.put(1, 2850.50);  // Hier Werte ändern
-    m1Salaries.put(2, 3125.80);
-    // ... weitere Stufen
+    // M2 - Berufsunteroffiziere (Beispiel)
+    Map<Integer, Double> m2Salaries = new HashMap<>();
+    m2Salaries.put(1, 2350.60);   // Stufe 1
+    m2Salaries.put(2, 2585.40);   // Stufe 2
+    m2Salaries.put(3, 2845.70);   // Stufe 3
+    // ... Stufen 4-18
+    m2Salaries.put(19, 7105.00);  // Stufe 19
+    m2Salaries.put(20, 7350.00);  // daz (kleine Dienstalterzulage)
+    m2Salaries.put(21, 7650.00);  // DAZ (große Dienstalterzulage)
+    salaryData.put("M2", m2Salaries);
+
+    // Wiederholen Sie dies für M1 und M3
 }
 ```
+
+**Stufen-Mapping:**
+- Position 1-19 = Gehaltsstufen 1-19
+- Position 20 = daz (kleine Dienstalterzulage)
+- Position 21 = DAZ (große Dienstalterzulage)
 
 ## Technische Details
 
