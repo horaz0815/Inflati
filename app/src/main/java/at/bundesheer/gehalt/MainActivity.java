@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Spinner spinnerVerwendungsgruppe;
     private Spinner spinnerGehaltsstufe;
+    private Spinner spinnerFunktionsubergruppe;
     private Spinner spinnerFunktionsgruppe;
     private Spinner spinnerFunktionsstufe;
     private Button btnBerechnen;
@@ -30,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
     // Salary data structure: Verwendungsgruppe -> Gehaltsstufe -> Amount
     private Map<String, Map<Integer, Double>> salaryData;
 
-    // Function allowance data: Funktionsgruppe -> Funktionsstufe -> Amount
-    private Map<String, Map<Integer, Double>> functionAllowanceData;
+    // Function allowance data: Übergruppe -> Funktionsgruppe -> Funktionsstufe -> Amount
+    private Map<String, Map<Integer, Map<Integer, Double>>> functionAllowanceData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,53 +127,50 @@ public class MainActivity extends AppCompatActivity {
         m3Salaries.put(21, 6725.00); // DAZ
         salaryData.put("M3", m3Salaries);
 
-        // Function allowances
+        // Function allowances - NEW STRUCTURE
         functionAllowanceData = new HashMap<>();
 
-        // F1 - Gruppenkommandant (Squad Leader)
-        Map<Integer, Double> f1Allowances = new HashMap<>();
-        f1Allowances.put(1, 185.50);
-        f1Allowances.put(2, 225.80);
-        f1Allowances.put(3, 275.40);
-        functionAllowanceData.put("F1", f1Allowances);
+        // MBO 1 - Offiziere (6 Funktionsgruppen, je 4 Stufen)
+        Map<Integer, Map<Integer, Double>> mbo1 = new HashMap<>();
+        for (int gruppe = 1; gruppe <= 6; gruppe++) {
+            Map<Integer, Double> stufen = new HashMap<>();
+            stufen.put(1, 200.00 + (gruppe * 50)); // BEISPIELDATEN
+            stufen.put(2, 250.00 + (gruppe * 60));
+            stufen.put(3, 300.00 + (gruppe * 70));
+            stufen.put(4, 350.00 + (gruppe * 80));
+            mbo1.put(gruppe, stufen);
+        }
+        functionAllowanceData.put("MBO1", mbo1);
 
-        // F2 - Zugführer (Platoon Leader)
-        Map<Integer, Double> f2Allowances = new HashMap<>();
-        f2Allowances.put(1, 285.70);
-        f2Allowances.put(2, 345.90);
-        f2Allowances.put(3, 415.60);
-        functionAllowanceData.put("F2", f2Allowances);
+        // MBO 2 - Offiziere (9 Funktionsgruppen, je 4 Stufen)
+        Map<Integer, Map<Integer, Double>> mbo2 = new HashMap<>();
+        for (int gruppe = 1; gruppe <= 9; gruppe++) {
+            Map<Integer, Double> stufen = new HashMap<>();
+            stufen.put(1, 300.00 + (gruppe * 60)); // BEISPIELDATEN
+            stufen.put(2, 380.00 + (gruppe * 75));
+            stufen.put(3, 460.00 + (gruppe * 90));
+            stufen.put(4, 540.00 + (gruppe * 105));
+            mbo2.put(gruppe, stufen);
+        }
+        functionAllowanceData.put("MBO2", mbo2);
 
-        // F3 - Kompaniechef (Company Commander)
-        Map<Integer, Double> f3Allowances = new HashMap<>();
-        f3Allowances.put(1, 425.80);
-        f3Allowances.put(2, 515.40);
-        f3Allowances.put(3, 625.90);
-        functionAllowanceData.put("F3", f3Allowances);
-
-        // F4 - Bataillonskommandant (Battalion Commander)
-        Map<Integer, Double> f4Allowances = new HashMap<>();
-        f4Allowances.put(1, 685.50);
-        f4Allowances.put(2, 825.70);
-        f4Allowances.put(3, 995.30);
-        functionAllowanceData.put("F4", f4Allowances);
-
-        // F5 - Regimentskommandant (Regiment Commander)
-        Map<Integer, Double> f5Allowances = new HashMap<>();
-        f5Allowances.put(1, 985.60);
-        f5Allowances.put(2, 1185.90);
-        f5Allowances.put(3, 1425.40);
-        functionAllowanceData.put("F5", f5Allowances);
-
-        // No function (Keine)
-        Map<Integer, Double> noFunction = new HashMap<>();
-        noFunction.put(0, 0.0);
-        functionAllowanceData.put("Keine", noFunction);
+        // MUO 1 - Unteroffiziere (7 Funktionsgruppen, je 4 Stufen)
+        Map<Integer, Map<Integer, Double>> muo1 = new HashMap<>();
+        for (int gruppe = 1; gruppe <= 7; gruppe++) {
+            Map<Integer, Double> stufen = new HashMap<>();
+            stufen.put(1, 150.00 + (gruppe * 40)); // BEISPIELDATEN
+            stufen.put(2, 190.00 + (gruppe * 50));
+            stufen.put(3, 230.00 + (gruppe * 60));
+            stufen.put(4, 270.00 + (gruppe * 70));
+            muo1.put(gruppe, stufen);
+        }
+        functionAllowanceData.put("MUO1", muo1);
     }
 
     private void initializeViews() {
         spinnerVerwendungsgruppe = findViewById(R.id.spinnerVerwendungsgruppe);
         spinnerGehaltsstufe = findViewById(R.id.spinnerGehaltsstufe);
+        spinnerFunktionsubergruppe = findViewById(R.id.spinnerFunktionsubergruppe);
         spinnerFunktionsgruppe = findViewById(R.id.spinnerFunktionsgruppe);
         spinnerFunktionsstufe = findViewById(R.id.spinnerFunktionsstufe);
         btnBerechnen = findViewById(R.id.btnBerechnen);
@@ -195,11 +193,11 @@ public class MainActivity extends AppCompatActivity {
         gehaltAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerGehaltsstufe.setAdapter(gehaltAdapter);
 
-        // Funktionsgruppe Spinner
-        ArrayAdapter<CharSequence> funktionsAdapter = ArrayAdapter.createFromResource(this,
-                R.array.funktionsgruppen, android.R.layout.simple_spinner_item);
-        funktionsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerFunktionsgruppe.setAdapter(funktionsAdapter);
+        // Funktionsübergruppe Spinner
+        ArrayAdapter<CharSequence> ubergruppeAdapter = ArrayAdapter.createFromResource(this,
+                R.array.funktionsubergruppen, android.R.layout.simple_spinner_item);
+        ubergruppeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFunktionsubergruppe.setAdapter(ubergruppeAdapter);
 
         // Funktionsstufe Spinner
         ArrayAdapter<CharSequence> funktionsstufeAdapter = ArrayAdapter.createFromResource(this,
@@ -213,6 +211,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 calculateSalary();
+            }
+        });
+
+        // Update Funktionsgruppe based on Übergruppe selection
+        spinnerFunktionsubergruppe.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateFunktionsgruppeSpinner(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
@@ -232,23 +242,52 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void updateFunktionsgruppeSpinner(int ubergruppePosition) {
+        ArrayAdapter<CharSequence> adapter;
+
+        switch (ubergruppePosition) {
+            case 1: // MBO 1 - 6 Funktionsgruppen
+                adapter = ArrayAdapter.createFromResource(this,
+                        R.array.funktionsgruppen_mbo1, android.R.layout.simple_spinner_item);
+                break;
+            case 2: // MBO 2 - 9 Funktionsgruppen
+                adapter = ArrayAdapter.createFromResource(this,
+                        R.array.funktionsgruppen_mbo2, android.R.layout.simple_spinner_item);
+                break;
+            case 3: // MUO 1 - 7 Funktionsgruppen
+                adapter = ArrayAdapter.createFromResource(this,
+                        R.array.funktionsgruppen_muo1, android.R.layout.simple_spinner_item);
+                break;
+            default: // Keine
+                adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+                adapter.add("Keine");
+                break;
+        }
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFunktionsgruppe.setAdapter(adapter);
+        spinnerFunktionsgruppe.setEnabled(ubergruppePosition > 0);
+        spinnerFunktionsstufe.setEnabled(false);
+        spinnerFunktionsstufe.setSelection(0);
+    }
+
     private void calculateSalary() {
         // Get selections
         int verwendungPosition = spinnerVerwendungsgruppe.getSelectedItemPosition();
         int gehaltPosition = spinnerGehaltsstufe.getSelectedItemPosition();
-        int funktionsPosition = spinnerFunktionsgruppe.getSelectedItemPosition();
+        int ubergruppePosition = spinnerFunktionsubergruppe.getSelectedItemPosition();
+        int funktionsgruppePosition = spinnerFunktionsgruppe.getSelectedItemPosition();
         int funktionsstufePosition = spinnerFunktionsstufe.getSelectedItemPosition();
 
         // Validate selections
         if (verwendungPosition == 0 || gehaltPosition == 0) {
-            // Show error or return
             cardResults.setVisibility(View.GONE);
             return;
         }
 
         // Extract usage group code (M1, M2, M3)
-        String verwendungsKey = extractCode(spinnerVerwendungsgruppe.getSelectedItem().toString());
-        int gehaltsstufe = gehaltPosition; // Position 1-19 = Stufe 1-19, Position 20 = daz, Position 21 = DAZ
+        String verwendungsKey = extractVerwendungsCode(spinnerVerwendungsgruppe.getSelectedItem().toString());
+        int gehaltsstufe = gehaltPosition;
 
         // Get basic salary
         double grundgehalt = 0.0;
@@ -261,14 +300,16 @@ public class MainActivity extends AppCompatActivity {
 
         // Get function allowance
         double funktionszulage = 0.0;
-        if (funktionsPosition > 0) {
-            String funktionsKey = extractCode(spinnerFunktionsgruppe.getSelectedItem().toString());
-            int funktionsstufe = funktionsstufePosition; // 0 for Keine, 1-3 for others
+        if (ubergruppePosition > 0 && funktionsgruppePosition > 0 && funktionsstufePosition > 0) {
+            String ubergruppeKey = extractUbergruppeCode(ubergruppePosition);
 
-            if (funktionsstufe > 0 && functionAllowanceData.containsKey(funktionsKey)) {
-                Map<Integer, Double> stufen = functionAllowanceData.get(funktionsKey);
-                if (stufen.containsKey(funktionsstufe)) {
-                    funktionszulage = stufen.get(funktionsstufe);
+            if (functionAllowanceData.containsKey(ubergruppeKey)) {
+                Map<Integer, Map<Integer, Double>> gruppen = functionAllowanceData.get(ubergruppeKey);
+                if (gruppen.containsKey(funktionsgruppePosition)) {
+                    Map<Integer, Double> stufen = gruppen.get(funktionsgruppePosition);
+                    if (stufen.containsKey(funktionsstufePosition)) {
+                        funktionszulage = stufen.get(funktionsstufePosition);
+                    }
                 }
             }
         }
@@ -283,17 +324,19 @@ public class MainActivity extends AppCompatActivity {
         cardResults.setVisibility(View.VISIBLE);
     }
 
-    private String extractCode(String text) {
-        // Extract M1, M2, M3, F1, F2, etc. from spinner text
+    private String extractVerwendungsCode(String text) {
         if (text.contains("M1")) return "M1";
         if (text.contains("M2")) return "M2";
         if (text.contains("M3")) return "M3";
-        if (text.contains("F1")) return "F1";
-        if (text.contains("F2")) return "F2";
-        if (text.contains("F3")) return "F3";
-        if (text.contains("F4")) return "F4";
-        if (text.contains("F5")) return "F5";
-        if (text.contains("Keine")) return "Keine";
         return "";
+    }
+
+    private String extractUbergruppeCode(int position) {
+        switch (position) {
+            case 1: return "MBO1";
+            case 2: return "MBO2";
+            case 3: return "MUO1";
+            default: return "";
+        }
     }
 }

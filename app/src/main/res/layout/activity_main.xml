@@ -113,6 +113,24 @@
                     android:textColor="@color/colorPrimary"
                     android:layout_marginBottom="16dp" />
 
+                <!-- Funktionsübergruppe -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/funktionsubergruppe"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_dark"
+                    android:layout_marginTop="8dp" />
+
+                <Spinner
+                    android:id="@+id/spinnerFunktionsubergruppe"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:padding="12dp"
+                    android:background="@android:drawable/edit_text" />
+
                 <!-- Funktionsgruppe -->
                 <TextView
                     android:layout_width="match_parent"
@@ -121,7 +139,7 @@
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:textColor="@color/text_dark"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="16dp" />
 
                 <Spinner
                     android:id="@+id/spinnerFunktionsgruppe"

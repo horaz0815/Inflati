@@ -6,6 +6,7 @@
     <string name="verwendungsgruppe">Verwendungsgruppe</string>
     <string name="gehaltsstufe">Gehaltsstufe</string>
     <string name="funktionsgruppe">Funktionsgruppe</string>
+    <string name="funktionsubergruppe">Funktionsübergruppe</string>
     <string name="funktionsstufe">Funktionsstufe</string>
     <string name="berechnen">Gehalt berechnen</string>
     <string name="grundgehalt">Grundgehalt</string>
@@ -47,19 +48,52 @@
         <item>DAZ (große Dienstalterzulage)</item>
     </string-array>
 
-    <string-array name="funktionsgruppen">
+    <string-array name="funktionsubergruppen">
         <item>Keine</item>
-        <item>F1 - Gruppenkommandant</item>
-        <item>F2 - Zugführer</item>
-        <item>F3 - Kompaniechef</item>
-        <item>F4 - Bataillonskommandant</item>
-        <item>F5 - Regimentskommandant</item>
+        <item>MBO 1 - Offiziere</item>
+        <item>MBO 2 - Offiziere</item>
+        <item>MUO 1 - Unteroffiziere</item>
+    </string-array>
+
+    <string-array name="funktionsgruppen_mbo1">
+        <item>Bitte wählen...</item>
+        <item>Funktionsgruppe 1</item>
+        <item>Funktionsgruppe 2</item>
+        <item>Funktionsgruppe 3</item>
+        <item>Funktionsgruppe 4</item>
+        <item>Funktionsgruppe 5</item>
+        <item>Funktionsgruppe 6</item>
+    </string-array>
+
+    <string-array name="funktionsgruppen_mbo2">
+        <item>Bitte wählen...</item>
+        <item>Funktionsgruppe 1</item>
+        <item>Funktionsgruppe 2</item>
+        <item>Funktionsgruppe 3</item>
+        <item>Funktionsgruppe 4</item>
+        <item>Funktionsgruppe 5</item>
+        <item>Funktionsgruppe 6</item>
+        <item>Funktionsgruppe 7</item>
+        <item>Funktionsgruppe 8</item>
+        <item>Funktionsgruppe 9</item>
+    </string-array>
+
+    <string-array name="funktionsgruppen_muo1">
+        <item>Bitte wählen...</item>
+        <item>Funktionsgruppe 1</item>
+        <item>Funktionsgruppe 2</item>
+        <item>Funktionsgruppe 3</item>
+        <item>Funktionsgruppe 4</item>
+        <item>Funktionsgruppe 5</item>
+        <item>Funktionsgruppe 6</item>
+        <item>Funktionsgruppe 7</item>
     </string-array>
 
     <string-array name="funktionsstufen">
-        <item>Keine</item>
+        <item>Bitte wählen...</item>
         <item>Stufe 1</item>
         <item>Stufe 2</item>
         <item>Stufe 3</item>
+        <item>Stufe 4</item>
     </string-array>
 </resources>
