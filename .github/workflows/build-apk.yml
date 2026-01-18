@@ -29,17 +29,25 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
 
-    - name: Download Gradle Wrapper JAR
+    - name: Install Gradle
       run: |
-        mkdir -p gradle/wrapper
-        curl -L -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/master/gradle/wrapper/gradle-wrapper.jar
-        chmod +x gradlew
+        wget https://services.gradle.org/distributions/gradle-8.0-bin.zip
+        unzip -q gradle-8.0-bin.zip
+        sudo mv gradle-8.0 /opt/gradle
+        export PATH=/opt/gradle/bin:$PATH
+        gradle --version
 
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug --stacktrace
+    - name: Build Debug APK with Gradle
+      run: |
+        export PATH=/opt/gradle/bin:$PATH
+        gradle wrapper --gradle-version 8.0
+        chmod +x gradlew
+        ./gradlew assembleDebug --stacktrace
 
     - name: Build Release APK
-      run: ./gradlew assembleRelease --stacktrace
+      run: |
+        export PATH=/opt/gradle/bin:$PATH
+        ./gradlew assembleRelease --stacktrace
       continue-on-error: true
 
     - name: Upload Debug APK
