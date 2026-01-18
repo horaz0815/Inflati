@@ -2,6 +2,17 @@
 
 Eine Android-Anwendung zur Berechnung von Gehältern für österreichisches Bundesheer-Personal basierend auf den Gehaltstabellen 2025.
 
+## 📥 APK Herunterladen
+
+**Die APK wird automatisch bei jedem Push gebaut!**
+
+1. Gehen Sie zu [GitHub Actions](https://github.com/horaz0815/Inflati/actions)
+2. Klicken Sie auf den neuesten erfolgreichen Build (grünes ✓)
+3. Scrollen Sie zu "Artifacts" und laden Sie **app-debug.zip** herunter
+4. Entpacken Sie die ZIP-Datei und installieren Sie die APK auf Ihrem Android-Gerät
+
+Detaillierte Anleitung: Siehe [APK_DOWNLOAD_ANLEITUNG.md](APK_DOWNLOAD_ANLEITUNG.md)
+
 ## Features
 
 - **Verwendungsgruppen-Auswahl**: M1 (Berufsoffiziere), M2 (Berufsunteroffiziere), M3 (Chargen)
