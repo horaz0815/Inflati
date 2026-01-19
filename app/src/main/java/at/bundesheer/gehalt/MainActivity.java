@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Comparison data
     private SalaryResult salaryA = null;
+    private SalaryResult currentSalary = null;  // Store current calculation
 
     // Salary data structure: Verwendungsgruppe -> Gehaltsstufe -> Amount
     private Map<String, Map<Integer, Double>> salaryData;
@@ -675,21 +676,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // Calculate total
-        double gesamtgehalt = grundgehalt + funktionszulage + nebengebuehren;
+        // Calculate total and store result
+        currentSalary = new SalaryResult(grundgehalt, funktionszulage, nebengebuehren);
 
         // Display results
-        tvGrundgehalt.setText(euroFormat.format(grundgehalt));
-        tvFunktionszulage.setText(euroFormat.format(funktionszulage));
-        tvNebengebuehren.setText(euroFormat.format(nebengebuehren));
-        tvGesamtgehalt.setText(euroFormat.format(gesamtgehalt));
+        tvGrundgehalt.setText(euroFormat.format(currentSalary.grundgehalt));
+        tvFunktionszulage.setText(euroFormat.format(currentSalary.funktionszulage));
+        tvNebengebuehren.setText(euroFormat.format(currentSalary.nebengebuehren));
+        tvGesamtgehalt.setText(euroFormat.format(currentSalary.gesamtgehalt));
         cardResults.setVisibility(View.VISIBLE);
 
         // Check if we should show comparison
         if (salaryA != null) {
             // This is Salary B - show comparison
-            SalaryResult salaryB = new SalaryResult(grundgehalt, funktionszulage, nebengebuehren);
-            showComparison(salaryB);
+            showComparison(currentSalary);
         } else {
             // First calculation - show comparison button
             btnVergleichHinzufuegen.setVisibility(View.VISIBLE);
@@ -698,18 +698,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void addToComparison() {
         // Save current calculation as Salary A
-        double grundgehalt = parseEuro(tvGrundgehalt.getText().toString());
-        double funktionszulage = parseEuro(tvFunktionszulage.getText().toString());
-        double nebengebuehren = parseEuro(tvNebengebuehren.getText().toString());
+        if (currentSalary != null) {
+            salaryA = currentSalary;
 
-        salaryA = new SalaryResult(grundgehalt, funktionszulage, nebengebuehren);
+            // Hide comparison button
+            btnVergleichHinzufuegen.setVisibility(View.GONE);
 
-        // Hide comparison button and show message
-        btnVergleichHinzufuegen.setVisibility(View.GONE);
-
-        // Reset form for second calculation
-        // The user can now enter different values and calculate again
-        // When they click "Berechnen", it will trigger the comparison
+            // Reset form for second calculation
+            // The user can now enter different values and calculate again
+            // When they click "Berechnen", it will trigger the comparison
+        }
     }
 
     private void resetComparison() {
