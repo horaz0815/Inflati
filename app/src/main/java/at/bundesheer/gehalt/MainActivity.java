@@ -48,122 +48,255 @@ public class MainActivity extends AppCompatActivity {
     private void initializeSalaryData() {
         salaryData = new HashMap<>();
 
-        // HINWEIS: Dies sind BEISPIELDATEN!
-        // Bitte ersetzen Sie diese mit den aktuellen offiziellen Werten von:
+        // OFFIZIELLE DATEN 2025 von GÖD Gehaltstabellen
+        // Quelle: § 85 und § 89 GehG, gültig ab 01.01.2025
         // https://www.goed.at/themen/gehaltstabellen-2025/militaerischer-dienst
 
-        // M1 - Berufsoffiziere (Professional Officers)
+        // M1 - Berufsoffiziere M BO 1
         Map<Integer, Double> m1Salaries = new HashMap<>();
-        m1Salaries.put(1, 2850.50);
-        m1Salaries.put(2, 3125.80);
-        m1Salaries.put(3, 3425.30);
-        m1Salaries.put(4, 3750.90);
-        m1Salaries.put(5, 4105.20);
-        m1Salaries.put(6, 4485.70);
-        m1Salaries.put(7, 4895.40);
-        m1Salaries.put(8, 5335.80);
-        m1Salaries.put(9, 5550.00);
-        m1Salaries.put(10, 5775.00);
-        m1Salaries.put(11, 6010.00);
-        m1Salaries.put(12, 6255.00);
-        m1Salaries.put(13, 6510.00);
-        m1Salaries.put(14, 6775.00);
-        m1Salaries.put(15, 7050.00);
-        m1Salaries.put(16, 7335.00);
-        m1Salaries.put(17, 7630.00);
-        m1Salaries.put(18, 7935.00);
-        m1Salaries.put(19, 8250.00);
-        m1Salaries.put(20, 8500.00); // daz
-        m1Salaries.put(21, 8800.00); // DAZ
+        m1Salaries.put(1, 3296.8);
+        m1Salaries.put(2, 3414.9);
+        m1Salaries.put(3, 3592.6);
+        m1Salaries.put(4, 3846.4);
+        m1Salaries.put(5, 4101.6);
+        m1Salaries.put(6, 4358.3);
+        m1Salaries.put(7, 4613.7);
+        m1Salaries.put(8, 4870.4);
+        m1Salaries.put(9, 5128.5);
+        m1Salaries.put(10, 5386.8);
+        m1Salaries.put(11, 5643.4);
+        m1Salaries.put(12, 5900.2);
+        m1Salaries.put(13, 6158.4);
+        m1Salaries.put(14, 6415.1);
+        m1Salaries.put(15, 6699.6);
+        m1Salaries.put(16, 6966.0);
+        m1Salaries.put(17, 0.0); // Nicht in Tabelle
+        m1Salaries.put(18, 0.0); // Nicht in Tabelle
+        m1Salaries.put(19, 0.0); // Nicht in Tabelle
+        m1Salaries.put(20, 135.8); // daz (kleine Dienstalterzulage)
+        m1Salaries.put(21, 541.2); // DAZ (große Dienstalterzulage)
         salaryData.put("M1", m1Salaries);
 
-        // M2 - Berufsunteroffiziere (Professional NCOs)
+        // M2 - Berufsunteroffiziere M BUO
         Map<Integer, Double> m2Salaries = new HashMap<>();
-        m2Salaries.put(1, 2350.60);
-        m2Salaries.put(2, 2585.40);
-        m2Salaries.put(3, 2845.70);
-        m2Salaries.put(4, 3125.30);
-        m2Salaries.put(5, 3425.90);
-        m2Salaries.put(6, 3750.50);
-        m2Salaries.put(7, 4095.80);
-        m2Salaries.put(8, 4465.20);
-        m2Salaries.put(9, 4655.00);
-        m2Salaries.put(10, 4855.00);
-        m2Salaries.put(11, 5065.00);
-        m2Salaries.put(12, 5285.00);
-        m2Salaries.put(13, 5515.00);
-        m2Salaries.put(14, 5755.00);
-        m2Salaries.put(15, 6005.00);
-        m2Salaries.put(16, 6265.00);
-        m2Salaries.put(17, 6535.00);
-        m2Salaries.put(18, 6815.00);
-        m2Salaries.put(19, 7105.00);
-        m2Salaries.put(20, 7350.00); // daz
-        m2Salaries.put(21, 7650.00); // DAZ
+        m2Salaries.put(1, 2532.0);
+        m2Salaries.put(2, 2552.2);
+        m2Salaries.put(3, 2572.6);
+        m2Salaries.put(4, 2592.6);
+        m2Salaries.put(5, 2634.7);
+        m2Salaries.put(6, 2676.5);
+        m2Salaries.put(7, 2729.6);
+        m2Salaries.put(8, 2794.0);
+        m2Salaries.put(9, 2858.8);
+        m2Salaries.put(10, 2929.1);
+        m2Salaries.put(11, 2999.9);
+        m2Salaries.put(12, 3077.7);
+        m2Salaries.put(13, 3162.2);
+        m2Salaries.put(14, 3255.3);
+        m2Salaries.put(15, 3359.3);
+        m2Salaries.put(16, 3466.2);
+        m2Salaries.put(17, 3572.9);
+        m2Salaries.put(18, 3681.3);
+        m2Salaries.put(19, 3790.8);
+        m2Salaries.put(20, 137.0); // daz (kleine Dienstalterzulage)
+        m2Salaries.put(21, 218.2); // DAZ (große Dienstalterzulage)
         salaryData.put("M2", m2Salaries);
 
-        // M3 - Chargen (Enlisted ranks)
+        // M3 - Chargen M ZCh
         Map<Integer, Double> m3Salaries = new HashMap<>();
-        m3Salaries.put(1, 1985.40);
-        m3Salaries.put(2, 2185.70);
-        m3Salaries.put(3, 2405.80);
-        m3Salaries.put(4, 2645.50);
-        m3Salaries.put(5, 2905.90);
-        m3Salaries.put(6, 3185.40);
-        m3Salaries.put(7, 3485.70);
-        m3Salaries.put(8, 3805.30);
-        m3Salaries.put(9, 3975.00);
-        m3Salaries.put(10, 4155.00);
-        m3Salaries.put(11, 4345.00);
-        m3Salaries.put(12, 4545.00);
-        m3Salaries.put(13, 4755.00);
-        m3Salaries.put(14, 4975.00);
-        m3Salaries.put(15, 5205.00);
-        m3Salaries.put(16, 5445.00);
-        m3Salaries.put(17, 5695.00);
-        m3Salaries.put(18, 5955.00);
-        m3Salaries.put(19, 6225.00);
-        m3Salaries.put(20, 6450.00); // daz
-        m3Salaries.put(21, 6725.00); // DAZ
+        m3Salaries.put(1, 2378.3);
+        m3Salaries.put(2, 2378.3);
+        m3Salaries.put(3, 2378.3);
+        m3Salaries.put(4, 2378.3);
+        m3Salaries.put(5, 2378.3);
+        m3Salaries.put(6, 2381.9);
+        m3Salaries.put(7, 2401.6);
+        m3Salaries.put(8, 2423.8);
+        m3Salaries.put(9, 2443.4);
+        m3Salaries.put(10, 2463.8);
+        m3Salaries.put(11, 2485.2);
+        m3Salaries.put(12, 2496.6);
+        m3Salaries.put(13, 0.0); // Nicht in Tabelle
+        m3Salaries.put(14, 0.0); // Nicht in Tabelle
+        m3Salaries.put(15, 0.0); // Nicht in Tabelle
+        m3Salaries.put(16, 0.0); // Nicht in Tabelle
+        m3Salaries.put(17, 0.0); // Nicht in Tabelle
+        m3Salaries.put(18, 0.0); // Nicht in Tabelle
+        m3Salaries.put(19, 0.0); // Nicht in Tabelle
+        m3Salaries.put(20, 0.0); // daz nicht in Tabelle
+        m3Salaries.put(21, 0.0); // DAZ nicht in Tabelle
         salaryData.put("M3", m3Salaries);
 
-        // Function allowances - NEW STRUCTURE
+        // FUNKTIONSZULAGEN § 91 GehG - OFFIZIELLE DATEN 2025
         functionAllowanceData = new HashMap<>();
 
-        // MBO 1 - Offiziere (6 Funktionsgruppen, je 4 Stufen)
+        // MBO 1 - Offiziere M BO 1 / M ZO 1 (6 Funktionsgruppen, je 4 Stufen)
         Map<Integer, Map<Integer, Double>> mbo1 = new HashMap<>();
-        for (int gruppe = 1; gruppe <= 6; gruppe++) {
-            Map<Integer, Double> stufen = new HashMap<>();
-            stufen.put(1, 200.00 + (gruppe * 50)); // BEISPIELDATEN
-            stufen.put(2, 250.00 + (gruppe * 60));
-            stufen.put(3, 300.00 + (gruppe * 70));
-            stufen.put(4, 350.00 + (gruppe * 80));
-            mbo1.put(gruppe, stufen);
-        }
+
+        Map<Integer, Double> mbo1_fg1 = new HashMap<>();
+        mbo1_fg1.put(1, 76.8);
+        mbo1_fg1.put(2, 227.9);
+        mbo1_fg1.put(3, 425.2);
+        mbo1_fg1.put(4, 485.4);
+        mbo1.put(1, mbo1_fg1);
+
+        Map<Integer, Double> mbo1_fg2 = new HashMap<>();
+        mbo1_fg2.put(1, 379.0);
+        mbo1_fg2.put(2, 606.9);
+        mbo1_fg2.put(3, 1363.5);
+        mbo1_fg2.put(4, 2271.2);
+        mbo1.put(2, mbo1_fg2);
+
+        Map<Integer, Double> mbo1_fg3 = new HashMap<>();
+        mbo1_fg3.put(1, 409.8);
+        mbo1_fg3.put(2, 749.7);
+        mbo1_fg3.put(3, 1641.8);
+        mbo1_fg3.put(4, 2717.4);
+        mbo1.put(3, mbo1_fg3);
+
+        Map<Integer, Double> mbo1_fg4 = new HashMap<>();
+        mbo1_fg4.put(1, 436.3);
+        mbo1_fg4.put(2, 955.2);
+        mbo1_fg4.put(3, 1787.2);
+        mbo1_fg4.put(4, 2865.5);
+        mbo1.put(4, mbo1_fg4);
+
+        Map<Integer, Double> mbo1_fg5 = new HashMap<>();
+        mbo1_fg5.put(1, 1002.6);
+        mbo1_fg5.put(2, 1760.7);
+        mbo1_fg5.put(3, 3143.6);
+        mbo1_fg5.put(4, 4283.3);
+        mbo1.put(5, mbo1_fg5);
+
+        Map<Integer, Double> mbo1_fg6 = new HashMap<>();
+        mbo1_fg6.put(1, 1208.2);
+        mbo1_fg6.put(2, 2036.1);
+        mbo1_fg6.put(3, 3445.7);
+        mbo1_fg6.put(4, 4556.3);
+        mbo1.put(6, mbo1_fg6);
+
         functionAllowanceData.put("MBO1", mbo1);
 
-        // MBO 2 - Offiziere (9 Funktionsgruppen, je 4 Stufen)
+        // MBO 2 - Offiziere M BO 2 / M ZO 2 / M ZO 3 (9 Funktionsgruppen, je 4 Stufen)
         Map<Integer, Map<Integer, Double>> mbo2 = new HashMap<>();
-        for (int gruppe = 1; gruppe <= 9; gruppe++) {
-            Map<Integer, Double> stufen = new HashMap<>();
-            stufen.put(1, 300.00 + (gruppe * 60)); // BEISPIELDATEN
-            stufen.put(2, 380.00 + (gruppe * 75));
-            stufen.put(3, 460.00 + (gruppe * 90));
-            stufen.put(4, 540.00 + (gruppe * 105));
-            mbo2.put(gruppe, stufen);
-        }
+
+        Map<Integer, Double> mbo2_fg1 = new HashMap<>();
+        mbo2_fg1.put(1, 91.0);
+        mbo2_fg1.put(2, 106.3);
+        mbo2_fg1.put(3, 121.5);
+        mbo2_fg1.put(4, 137.0);
+        mbo2.put(1, mbo2_fg1);
+
+        Map<Integer, Double> mbo2_fg2 = new HashMap<>();
+        mbo2_fg2.put(1, 106.3);
+        mbo2_fg2.put(2, 137.0);
+        mbo2_fg2.put(3, 166.3);
+        mbo2_fg2.put(4, 227.9);
+        mbo2.put(2, mbo2_fg2);
+
+        Map<Integer, Double> mbo2_fg3 = new HashMap<>();
+        mbo2_fg3.put(1, 258.8);
+        mbo2_fg3.put(2, 365.0);
+        mbo2_fg3.put(3, 530.0);
+        mbo2_fg3.put(4, 1060.2);
+        mbo2.put(3, mbo2_fg3);
+
+        Map<Integer, Double> mbo2_fg4 = new HashMap<>();
+        mbo2_fg4.put(1, 334.1);
+        mbo2_fg4.put(2, 454.5);
+        mbo2_fg4.put(3, 727.2);
+        mbo2_fg4.put(4, 1439.2);
+        mbo2.put(4, mbo2_fg4);
+
+        Map<Integer, Double> mbo2_fg5 = new HashMap<>();
+        mbo2_fg5.put(1, 365.0);
+        mbo2_fg5.put(2, 485.4);
+        mbo2_fg5.put(3, 787.3);
+        mbo2_fg5.put(4, 1545.4);
+        mbo2.put(5, mbo2_fg5);
+
+        Map<Integer, Double> mbo2_fg6 = new HashMap<>();
+        mbo2_fg6.put(1, 454.5);
+        mbo2_fg6.put(2, 606.9);
+        mbo2_fg6.put(3, 1060.2);
+        mbo2_fg6.put(4, 1787.2);
+        mbo2.put(6, mbo2_fg6);
+
+        Map<Integer, Double> mbo2_fg7 = new HashMap<>();
+        mbo2_fg7.put(1, 530.0);
+        mbo2_fg7.put(2, 682.4);
+        mbo2_fg7.put(3, 1135.7);
+        mbo2_fg7.put(4, 1969.0);
+        mbo2.put(7, mbo2_fg7);
+
+        Map<Integer, Double> mbo2_fg8 = new HashMap<>();
+        mbo2_fg8.put(1, 1068.4);
+        mbo2_fg8.put(2, 1424.9);
+        mbo2_fg8.put(3, 2136.9);
+        mbo2_fg8.put(4, 2991.4);
+        mbo2.put(8, mbo2_fg8);
+
+        Map<Integer, Double> mbo2_fg9 = new HashMap<>();
+        mbo2_fg9.put(1, 1139.6);
+        mbo2_fg9.put(2, 1567.8);
+        mbo2_fg9.put(3, 2350.8);
+        mbo2_fg9.put(4, 3560.6);
+        mbo2.put(9, mbo2_fg9);
+
         functionAllowanceData.put("MBO2", mbo2);
 
-        // MUO 1 - Unteroffiziere (7 Funktionsgruppen, je 4 Stufen)
+        // MUO 1 - Unteroffiziere M BUO / M ZUO (7 Funktionsgruppen, je 4 Stufen)
         Map<Integer, Map<Integer, Double>> muo1 = new HashMap<>();
-        for (int gruppe = 1; gruppe <= 7; gruppe++) {
-            Map<Integer, Double> stufen = new HashMap<>();
-            stufen.put(1, 150.00 + (gruppe * 40)); // BEISPIELDATEN
-            stufen.put(2, 190.00 + (gruppe * 50));
-            stufen.put(3, 230.00 + (gruppe * 60));
-            stufen.put(4, 270.00 + (gruppe * 70));
-            muo1.put(gruppe, stufen);
-        }
+
+        Map<Integer, Double> muo1_fg1 = new HashMap<>();
+        muo1_fg1.put(1, 91.0);
+        muo1_fg1.put(2, 106.3);
+        muo1_fg1.put(3, 121.5);
+        muo1_fg1.put(4, 137.0);
+        muo1.put(1, muo1_fg1);
+
+        Map<Integer, Double> muo1_fg2 = new HashMap<>();
+        muo1_fg2.put(1, 106.3);
+        muo1_fg2.put(2, 137.0);
+        muo1_fg2.put(3, 166.3);
+        muo1_fg2.put(4, 197.3);
+        muo1.put(2, muo1_fg2);
+
+        Map<Integer, Double> muo1_fg3 = new HashMap<>();
+        muo1_fg3.put(1, 152.4);
+        muo1_fg3.put(2, 227.9);
+        muo1_fg3.put(3, 303.6);
+        muo1_fg3.put(4, 530.0);
+        muo1.put(3, muo1_fg3);
+
+        Map<Integer, Double> muo1_fg4 = new HashMap<>();
+        muo1_fg4.put(1, 227.9);
+        muo1_fg4.put(2, 303.6);
+        muo1_fg4.put(3, 379.0);
+        muo1_fg4.put(4, 606.9);
+        muo1.put(4, muo1_fg4);
+
+        Map<Integer, Double> muo1_fg5 = new HashMap<>();
+        muo1_fg5.put(1, 303.6);
+        muo1_fg5.put(2, 379.0);
+        muo1_fg5.put(3, 606.9);
+        muo1_fg5.put(4, 924.5);
+        muo1.put(5, muo1_fg5);
+
+        Map<Integer, Double> muo1_fg6 = new HashMap<>();
+        muo1_fg6.put(1, 379.0);
+        muo1_fg6.put(2, 454.5);
+        muo1_fg6.put(3, 758.0);
+        muo1_fg6.put(4, 984.8);
+        muo1.put(6, muo1_fg6);
+
+        Map<Integer, Double> muo1_fg7 = new HashMap<>();
+        muo1_fg7.put(1, 454.5);
+        muo1_fg7.put(2, 606.9);
+        muo1_fg7.put(3, 908.9);
+        muo1_fg7.put(4, 1212.4);
+        muo1.put(7, muo1_fg7);
+
         functionAllowanceData.put("MUO1", muo1);
     }
 
