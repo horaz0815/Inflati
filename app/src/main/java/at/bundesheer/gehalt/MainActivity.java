@@ -20,10 +20,12 @@ public class MainActivity extends AppCompatActivity {
     private Spinner spinnerFunktionsubergruppe;
     private Spinner spinnerFunktionsgruppe;
     private Spinner spinnerFunktionsstufe;
+    private Spinner spinnerLuftfahrttechniker;
     private Button btnBerechnen;
     private CardView cardResults;
     private TextView tvGrundgehalt;
     private TextView tvFunktionszulage;
+    private TextView tvNebengebuehren;
     private TextView tvGesamtgehalt;
 
     private DecimalFormat euroFormat = new DecimalFormat("€ #,##0.00");
@@ -33,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
     // Function allowance data: Übergruppe -> Funktionsgruppe -> Funktionsstufe -> Amount
     private Map<String, Map<Integer, Map<Integer, Double>>> functionAllowanceData;
+
+    // Luftfahrttechniker allowance data: Position -> Amount
+    private Map<Integer, Double> luftfahrtAllowanceData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -298,6 +303,16 @@ public class MainActivity extends AppCompatActivity {
         muo1.put(7, muo1_fg7);
 
         functionAllowanceData.put("MUO1", muo1);
+
+        // LUFTFAHRTTECHNIKER-NEBENGEBÜHREN
+        // TODO: Konkrete Beträge vom Benutzer erhalten
+        luftfahrtAllowanceData = new HashMap<>();
+        luftfahrtAllowanceData.put(0, 0.0);    // Keine
+        luftfahrtAllowanceData.put(1, 0.0);    // Assistenzdienst
+        luftfahrtAllowanceData.put(2, 0.0);    // Wart (MLuFWart)
+        luftfahrtAllowanceData.put(3, 0.0);    // Wart I (MLuFWart I. Kl)
+        luftfahrtAllowanceData.put(4, 0.0);    // Luftfahrtmeister (MLuFMst)
+        luftfahrtAllowanceData.put(5, 0.0);    // Leitender Dienst (Ltd Dienst)
     }
 
     private void initializeViews() {
@@ -306,10 +321,12 @@ public class MainActivity extends AppCompatActivity {
         spinnerFunktionsubergruppe = findViewById(R.id.spinnerFunktionsubergruppe);
         spinnerFunktionsgruppe = findViewById(R.id.spinnerFunktionsgruppe);
         spinnerFunktionsstufe = findViewById(R.id.spinnerFunktionsstufe);
+        spinnerLuftfahrttechniker = findViewById(R.id.spinnerLuftfahrttechniker);
         btnBerechnen = findViewById(R.id.btnBerechnen);
         cardResults = findViewById(R.id.cardResults);
         tvGrundgehalt = findViewById(R.id.tvGrundgehalt);
         tvFunktionszulage = findViewById(R.id.tvFunktionszulage);
+        tvNebengebuehren = findViewById(R.id.tvNebengebuehren);
         tvGesamtgehalt = findViewById(R.id.tvGesamtgehalt);
     }
 
@@ -337,6 +354,12 @@ public class MainActivity extends AppCompatActivity {
                 R.array.funktionsstufen, android.R.layout.simple_spinner_item);
         funktionsstufeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerFunktionsstufe.setAdapter(funktionsstufeAdapter);
+
+        // Luftfahrttechniker Spinner
+        ArrayAdapter<CharSequence> luftfahrtAdapter = ArrayAdapter.createFromResource(this,
+                R.array.luftfahrttechniker, android.R.layout.simple_spinner_item);
+        luftfahrtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLuftfahrttechniker.setAdapter(luftfahrtAdapter);
     }
 
     private void setupListeners() {
@@ -411,6 +434,7 @@ public class MainActivity extends AppCompatActivity {
         int ubergruppePosition = spinnerFunktionsubergruppe.getSelectedItemPosition();
         int funktionsgruppePosition = spinnerFunktionsgruppe.getSelectedItemPosition();
         int funktionsstufePosition = spinnerFunktionsstufe.getSelectedItemPosition();
+        int luftfahrtPosition = spinnerLuftfahrttechniker.getSelectedItemPosition();
 
         // Validate selections
         if (verwendungPosition == 0 || gehaltPosition == 0) {
@@ -447,12 +471,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        // Get Luftfahrttechniker allowance
+        double nebengebuehren = 0.0;
+        if (luftfahrtAllowanceData.containsKey(luftfahrtPosition)) {
+            nebengebuehren = luftfahrtAllowanceData.get(luftfahrtPosition);
+        }
+
         // Calculate total
-        double gesamtgehalt = grundgehalt + funktionszulage;
+        double gesamtgehalt = grundgehalt + funktionszulage + nebengebuehren;
 
         // Display results
         tvGrundgehalt.setText(euroFormat.format(grundgehalt));
         tvFunktionszulage.setText(euroFormat.format(funktionszulage));
+        tvNebengebuehren.setText(euroFormat.format(nebengebuehren));
         tvGesamtgehalt.setText(euroFormat.format(gesamtgehalt));
         cardResults.setVisibility(View.VISIBLE);
     }

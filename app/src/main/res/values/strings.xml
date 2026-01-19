@@ -12,6 +12,7 @@
     <string name="grundgehalt">Grundgehalt</string>
     <string name="funktionszulage">Funktionszulage</string>
     <string name="gesamtgehalt">Gesamtgehalt brutto/Monat</string>
+    <string name="luftfahrttechniker">Luftfahrttechniker-Nebengebühren</string>
     <string name="waehlen">Bitte wählen...</string>
     <string name="keine">Keine</string>
     <string name="euro">€</string>
@@ -95,5 +96,14 @@
         <item>Stufe 2</item>
         <item>Stufe 3</item>
         <item>Stufe 4</item>
+    </string-array>
+
+    <string-array name="luftfahrttechniker">
+        <item>Keine</item>
+        <item>Assistenzdienst</item>
+        <item>Wart (MLuFWart)</item>
+        <item>Wart I (MLuFWart I. Kl)</item>
+        <item>Luftfahrtmeister (MLuFMst)</item>
+        <item>Leitender Dienst (Ltd Dienst)</item>
     </string-array>
 </resources>
