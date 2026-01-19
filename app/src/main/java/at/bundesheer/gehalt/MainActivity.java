@@ -15,6 +15,21 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Inner class to store salary calculation results
+    private static class SalaryResult {
+        double grundgehalt;
+        double funktionszulage;
+        double nebengebuehren;
+        double gesamtgehalt;
+
+        SalaryResult(double grund, double funktion, double neben) {
+            this.grundgehalt = grund;
+            this.funktionszulage = funktion;
+            this.nebengebuehren = neben;
+            this.gesamtgehalt = grund + funktion + neben;
+        }
+    }
+
     // Inner class to store Luftfahrttechniker allowance components
     private static class LuftfahrtAllowance {
         double aeZivil;      // AE Zivil (Fixbetrag)
@@ -44,13 +59,30 @@ public class MainActivity extends AppCompatActivity {
     private Spinner spinnerLuftfahrtDetail;
     private TextView tvLuftfahrtDetail;
     private Button btnBerechnen;
+    private Button btnVergleichHinzufuegen;
+    private Button btnVergleichZuruecksetzen;
     private CardView cardResults;
+    private CardView cardComparison;
     private TextView tvGrundgehalt;
     private TextView tvFunktionszulage;
     private TextView tvNebengebuehren;
     private TextView tvGesamtgehalt;
 
+    // Comparison TextViews
+    private TextView tvGrundgehaltA;
+    private TextView tvFunktionszulageA;
+    private TextView tvNebengebuehrenA;
+    private TextView tvGesamtgehaltA;
+    private TextView tvGrundgehaltB;
+    private TextView tvFunktionszulageB;
+    private TextView tvNebengebuehrenB;
+    private TextView tvGesamtgehaltB;
+    private TextView tvDifferenz;
+
     private DecimalFormat euroFormat = new DecimalFormat("€ #,##0.00");
+
+    // Comparison data
+    private SalaryResult salaryA = null;
 
     // Salary data structure: Verwendungsgruppe -> Gehaltsstufe -> Amount
     private Map<String, Map<Integer, Double>> salaryData;
@@ -403,11 +435,25 @@ public class MainActivity extends AppCompatActivity {
         spinnerLuftfahrtDetail = findViewById(R.id.spinnerLuftfahrtDetail);
         tvLuftfahrtDetail = findViewById(R.id.tvLuftfahrtDetail);
         btnBerechnen = findViewById(R.id.btnBerechnen);
+        btnVergleichHinzufuegen = findViewById(R.id.btnVergleichHinzufuegen);
+        btnVergleichZuruecksetzen = findViewById(R.id.btnVergleichZuruecksetzen);
         cardResults = findViewById(R.id.cardResults);
+        cardComparison = findViewById(R.id.cardComparison);
         tvGrundgehalt = findViewById(R.id.tvGrundgehalt);
         tvFunktionszulage = findViewById(R.id.tvFunktionszulage);
         tvNebengebuehren = findViewById(R.id.tvNebengebuehren);
         tvGesamtgehalt = findViewById(R.id.tvGesamtgehalt);
+
+        // Comparison TextViews
+        tvGrundgehaltA = findViewById(R.id.tvGrundgehaltA);
+        tvFunktionszulageA = findViewById(R.id.tvFunktionszulageA);
+        tvNebengebuehrenA = findViewById(R.id.tvNebengebuehrenA);
+        tvGesamtgehaltA = findViewById(R.id.tvGesamtgehaltA);
+        tvGrundgehaltB = findViewById(R.id.tvGrundgehaltB);
+        tvFunktionszulageB = findViewById(R.id.tvFunktionszulageB);
+        tvNebengebuehrenB = findViewById(R.id.tvNebengebuehrenB);
+        tvGesamtgehaltB = findViewById(R.id.tvGesamtgehaltB);
+        tvDifferenz = findViewById(R.id.tvDifferenz);
     }
 
     private void setupSpinners() {
@@ -486,6 +532,21 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        // Comparison button listeners
+        btnVergleichHinzufuegen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addToComparison();
+            }
+        });
+
+        btnVergleichZuruecksetzen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetComparison();
             }
         });
     }
@@ -623,6 +684,71 @@ public class MainActivity extends AppCompatActivity {
         tvNebengebuehren.setText(euroFormat.format(nebengebuehren));
         tvGesamtgehalt.setText(euroFormat.format(gesamtgehalt));
         cardResults.setVisibility(View.VISIBLE);
+
+        // Check if we should show comparison
+        if (salaryA != null) {
+            // This is Salary B - show comparison
+            SalaryResult salaryB = new SalaryResult(grundgehalt, funktionszulage, nebengebuehren);
+            showComparison(salaryB);
+        } else {
+            // First calculation - show comparison button
+            btnVergleichHinzufuegen.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void addToComparison() {
+        // Save current calculation as Salary A
+        double grundgehalt = parseEuro(tvGrundgehalt.getText().toString());
+        double funktionszulage = parseEuro(tvFunktionszulage.getText().toString());
+        double nebengebuehren = parseEuro(tvNebengebuehren.getText().toString());
+
+        salaryA = new SalaryResult(grundgehalt, funktionszulage, nebengebuehren);
+
+        // Hide comparison button and show message
+        btnVergleichHinzufuegen.setVisibility(View.GONE);
+
+        // Reset form for second calculation
+        // The user can now enter different values and calculate again
+        // When they click "Berechnen", it will trigger the comparison
+    }
+
+    private void resetComparison() {
+        salaryA = null;
+        cardComparison.setVisibility(View.GONE);
+        btnVergleichHinzufuegen.setVisibility(View.VISIBLE);
+    }
+
+    private void showComparison(SalaryResult salaryB) {
+        // Display Salary A
+        tvGrundgehaltA.setText(euroFormat.format(salaryA.grundgehalt));
+        tvFunktionszulageA.setText(euroFormat.format(salaryA.funktionszulage));
+        tvNebengebuehrenA.setText(euroFormat.format(salaryA.nebengebuehren));
+        tvGesamtgehaltA.setText(euroFormat.format(salaryA.gesamtgehalt));
+
+        // Display Salary B
+        tvGrundgehaltB.setText(euroFormat.format(salaryB.grundgehalt));
+        tvFunktionszulageB.setText(euroFormat.format(salaryB.funktionszulage));
+        tvNebengebuehrenB.setText(euroFormat.format(salaryB.nebengebuehren));
+        tvGesamtgehaltB.setText(euroFormat.format(salaryB.gesamtgehalt));
+
+        // Calculate and display difference (B - A)
+        double differenz = salaryB.gesamtgehalt - salaryA.gesamtgehalt;
+        String differenzText = (differenz >= 0 ? "+ " : "- ") +
+                              euroFormat.format(Math.abs(differenz)).replace("€", "€ ");
+        tvDifferenz.setText(differenzText);
+
+        // Show comparison card
+        cardComparison.setVisibility(View.VISIBLE);
+    }
+
+    private double parseEuro(String euroString) {
+        try {
+            // Remove "€" and whitespace, replace comma with dot
+            String cleaned = euroString.replace("€", "").replace(" ", "").replace(".", "").replace(",", ".");
+            return Double.parseDouble(cleaned);
+        } catch (Exception e) {
+            return 0.0;
+        }
     }
 
     private String extractVerwendungsCode(String text) {

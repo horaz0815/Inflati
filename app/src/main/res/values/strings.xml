@@ -12,6 +12,12 @@
     <string name="grundgehalt">Grundgehalt</string>
     <string name="funktionszulage">Funktionszulage</string>
     <string name="gesamtgehalt">Gesamtgehalt brutto/Monat</string>
+    <string name="vergleich_hinzufuegen">Zum Vergleich hinzufügen</string>
+    <string name="vergleich_zuruecksetzen">Vergleich zurücksetzen</string>
+    <string name="vergleich_titel">Gehaltsvergleich</string>
+    <string name="gehalt_a">Gehalt A</string>
+    <string name="gehalt_b">Gehalt B</string>
+    <string name="differenz">Differenz</string>
     <string name="luftfahrttechniker">Luftfahrttechniker-Nebengebühren</string>
     <string name="luftfahrttechniker_detail">Detailauswahl</string>
     <string name="waehlen">Bitte wählen...</string>

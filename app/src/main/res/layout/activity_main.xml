@@ -377,5 +377,276 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Comparison Button -->
+        <Button
+            android:id="@+id/btnVergleichHinzufuegen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/vergleich_hinzufuegen"
+            android:textColor="@color/white"
+            android:background="@color/colorAccent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:padding="16dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <!-- Comparison Results Card -->
+        <androidx.cardview.widget.CardView
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/cardComparison"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"
+            card_view:cardCornerRadius="12dp"
+            card_view:cardElevation="4dp"
+            card_view:cardBackgroundColor="@color/result_background">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/vergleich_titel"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorPrimary" />
+
+                    <Button
+                        android:id="@+id/btnVergleichZuruecksetzen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/vergleich_zuruecksetzen"
+                        android:textSize="12sp"
+                        android:padding="8dp" />
+                </LinearLayout>
+
+                <!-- Headers -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text=""
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gehalt_a"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorPrimary"
+                        android:gravity="end" />
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gehalt_b"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorAccent"
+                        android:gravity="end"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+
+                <!-- Grundgehalt Vergleich -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/grundgehalt"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tvGrundgehaltA"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="€ 0,00"
+                        android:textSize="14sp"
+                        android:gravity="end" />
+
+                    <TextView
+                        android:id="@+id/tvGrundgehaltB"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="€ 0,00"
+                        android:textSize="14sp"
+                        android:gravity="end"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+
+                <!-- Funktionszulage Vergleich -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/funktionszulage"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tvFunktionszulageA"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="€ 0,00"
+                        android:textSize="14sp"
+                        android:gravity="end" />
+
+                    <TextView
+                        android:id="@+id/tvFunktionszulageB"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="€ 0,00"
+                        android:textSize="14sp"
+                        android:gravity="end"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+
+                <!-- Nebengebühren Vergleich -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Nebengebühren"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/tvNebengebuehrenA"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="€ 0,00"
+                        android:textSize="14sp"
+                        android:gravity="end" />
+
+                    <TextView
+                        android:id="@+id/tvNebengebuehrenB"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="€ 0,00"
+                        android:textSize="14sp"
+                        android:gravity="end"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/colorPrimary"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Gesamtgehalt Vergleich -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/gesamtgehalt"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/tvGesamtgehaltA"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="€ 0,00"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorPrimary"
+                        android:gravity="end" />
+
+                    <TextView
+                        android:id="@+id/tvGesamtgehaltB"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="€ 0,00"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorAccent"
+                        android:gravity="end"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/colorAccent"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Differenz -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="#FFF3E0"
+                    android:padding="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/differenz"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#E65100" />
+
+                    <TextView
+                        android:id="@+id/tvDifferenz"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="€ 0,00"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:textColor="#E65100" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
     </LinearLayout>
 </ScrollView>
