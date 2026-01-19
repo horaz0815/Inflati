@@ -15,12 +15,34 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Inner class to store Luftfahrttechniker allowance components
+    private static class LuftfahrtAllowance {
+        double aeZivil;      // AE Zivil (Fixbetrag)
+        double ezFaktor;     // EZ vH RB (Faktor)
+        double mlzFaktor;    // MLZ vH RB (Faktor)
+        double vergMilitar;  // Vergütung Militär (Fixbetrag)
+
+        LuftfahrtAllowance(double ae, double ez, double mlz, double verg) {
+            this.aeZivil = ae;
+            this.ezFaktor = ez;
+            this.mlzFaktor = mlz;
+            this.vergMilitar = verg;
+        }
+
+        double calculate() {
+            final double SOCKELBETRAG = 34.0983;
+            return aeZivil + (ezFaktor * SOCKELBETRAG) + (mlzFaktor * SOCKELBETRAG) + vergMilitar;
+        }
+    }
+
     private Spinner spinnerVerwendungsgruppe;
     private Spinner spinnerGehaltsstufe;
     private Spinner spinnerFunktionsubergruppe;
     private Spinner spinnerFunktionsgruppe;
     private Spinner spinnerFunktionsstufe;
     private Spinner spinnerLuftfahrttechniker;
+    private Spinner spinnerLuftfahrtDetail;
+    private TextView tvLuftfahrtDetail;
     private Button btnBerechnen;
     private CardView cardResults;
     private TextView tvGrundgehalt;
@@ -36,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
     // Function allowance data: Übergruppe -> Funktionsgruppe -> Funktionsstufe -> Amount
     private Map<String, Map<Integer, Map<Integer, Double>>> functionAllowanceData;
 
-    // Luftfahrttechniker allowance data: Position -> Amount
-    private Map<Integer, Double> luftfahrtAllowanceData;
+    // Luftfahrttechniker allowance data: Category -> Detail -> LuftfahrtAllowance
+    private Map<Integer, Map<Integer, LuftfahrtAllowance>> luftfahrtAllowanceData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -304,14 +326,71 @@ public class MainActivity extends AppCompatActivity {
 
         functionAllowanceData.put("MUO1", muo1);
 
-        // LUFTFAHRTTECHNIKER-NEBENGEBÜHREN (Vergütung Militär - Stand 01.01.2025)
+        // LUFTFAHRTTECHNIKER-NEBENGEBÜHREN (Stand 01.01.2025)
+        // Berechnung: AE Zivil + (EZ * 34,0983) + (MLZ * 34,0983) + Vergütung Militär
         luftfahrtAllowanceData = new HashMap<>();
-        luftfahrtAllowanceData.put(0, 0.0);      // Keine
-        luftfahrtAllowanceData.put(1, 29.40);    // Assistenzdienst (mit Beruf)
-        luftfahrtAllowanceData.put(2, 102.20);   // Wart (MLuFWart)
-        luftfahrtAllowanceData.put(3, 276.90);   // Wart I (MLuFWart I. Kl)
-        luftfahrtAllowanceData.put(4, 437.80);   // Luftfahrtmeister (MLuFMst)
-        luftfahrtAllowanceData.put(5, 335.80);   // Leitender Dienst (Ltd Dienst B wertig)
+
+        // 0: Keine
+        Map<Integer, LuftfahrtAllowance> keine = new HashMap<>();
+        keine.put(0, new LuftfahrtAllowance(0, 0, 0, 0));
+        luftfahrtAllowanceData.put(0, keine);
+
+        // 1: Assistenzdienst
+        Map<Integer, LuftfahrtAllowance> assistenz = new HashMap<>();
+        assistenz.put(1, new LuftfahrtAllowance(11.00, 2.00, 0, 15.30));      // ohne Beruf
+        assistenz.put(2, new LuftfahrtAllowance(11.00, 2.00, 3.17, 29.40));   // mit Beruf
+        luftfahrtAllowanceData.put(1, assistenz);
+
+        // 2: Wart (MLuFWart)
+        Map<Integer, LuftfahrtAllowance> wart = new HashMap<>();
+        wart.put(1, new LuftfahrtAllowance(14.60, 2.67, 4.00, 102.20));       // Basis
+        wart.put(2, new LuftfahrtAllowance(14.60, 3.60, 4.00, 102.20));       // 1 Typ
+        wart.put(3, new LuftfahrtAllowance(14.60, 4.53, 4.00, 102.20));       // 2 Typ
+        wart.put(4, new LuftfahrtAllowance(14.60, 3.34, 4.00, 102.20));       // 1 FEW
+        wart.put(5, new LuftfahrtAllowance(14.60, 4.01, 4.00, 102.20));       // 2 FEW
+        wart.put(6, new LuftfahrtAllowance(14.60, 4.27, 4.00, 102.20));       // 1 FEW + 1 Typ
+        wart.put(7, new LuftfahrtAllowance(14.60, 5.20, 4.00, 102.20));       // 1 FEW + 2 Typ
+        wart.put(8, new LuftfahrtAllowance(14.60, 4.94, 4.00, 102.20));       // 2 FEW + 1 Typ
+        wart.put(9, new LuftfahrtAllowance(14.60, 5.87, 4.00, 102.20));       // 2 FEW + 2 Typ
+        luftfahrtAllowanceData.put(2, wart);
+
+        // 3: Wart I (MLuFWart I. Kl)
+        Map<Integer, LuftfahrtAllowance> wartI = new HashMap<>();
+        wartI.put(1, new LuftfahrtAllowance(14.60, 2.67, 6.01, 276.90));      // Basis
+        wartI.put(2, new LuftfahrtAllowance(14.60, 3.60, 6.01, 276.90));      // 1 Typ
+        wartI.put(3, new LuftfahrtAllowance(14.60, 4.53, 6.01, 276.90));      // 2 Typ
+        wartI.put(4, new LuftfahrtAllowance(14.60, 4.54, 6.01, 276.90));      // 1 FEW
+        wartI.put(5, new LuftfahrtAllowance(14.60, 6.41, 6.01, 276.90));      // 2 FEW
+        wartI.put(6, new LuftfahrtAllowance(14.60, 5.47, 6.01, 276.90));      // 1 FEW + 1 Typ
+        wartI.put(7, new LuftfahrtAllowance(14.60, 6.40, 6.01, 276.90));      // 1 FEW + 2 Typ
+        wartI.put(8, new LuftfahrtAllowance(14.60, 7.34, 6.01, 276.90));      // 2 FEW + 1 Typ
+        wartI.put(9, new LuftfahrtAllowance(14.60, 8.27, 6.01, 276.90));      // 2 FEW + 2 Typ
+        luftfahrtAllowanceData.put(3, wartI);
+
+        // 4: Luftfahrtmeister (MLuFMst)
+        Map<Integer, LuftfahrtAllowance> meister = new HashMap<>();
+        meister.put(1, new LuftfahrtAllowance(14.60, 2.67, 8.68, 437.80));    // Basis
+        meister.put(2, new LuftfahrtAllowance(14.60, 3.60, 8.68, 437.80));    // 1 Typ
+        meister.put(3, new LuftfahrtAllowance(14.60, 4.53, 8.68, 437.80));    // 2 Typ
+        meister.put(4, new LuftfahrtAllowance(14.60, 4.00, 8.68, 437.80));    // 1 FEW
+        meister.put(5, new LuftfahrtAllowance(14.60, 5.33, 8.68, 437.80));    // 2 FEW
+        meister.put(6, new LuftfahrtAllowance(14.60, 4.93, 8.68, 437.80));    // 1 FEW + 1 Typ
+        meister.put(7, new LuftfahrtAllowance(14.60, 5.86, 8.68, 437.80));    // 1 FEW + 2 Typ
+        meister.put(8, new LuftfahrtAllowance(14.60, 6.26, 8.68, 437.80));    // 2 FEW + 1 Typ
+        meister.put(9, new LuftfahrtAllowance(14.60, 7.19, 8.68, 437.80));    // 2 FEW + 2 Typ
+        luftfahrtAllowanceData.put(4, meister);
+
+        // 5: Ltd Dienst B wertig
+        Map<Integer, LuftfahrtAllowance> ltdB = new HashMap<>();
+        ltdB.put(1, new LuftfahrtAllowance(7.30, 21.90, 4.00, 335.80));       // Standard
+        ltdB.put(2, new LuftfahrtAllowance(7.30, 21.90, 5.33, 335.80));       // nach einem Jahr
+        luftfahrtAllowanceData.put(5, ltdB);
+
+        // 6: Ltd Dienst A wertig
+        Map<Integer, LuftfahrtAllowance> ltdA = new HashMap<>();
+        ltdA.put(1, new LuftfahrtAllowance(7.30, 21.90, 4.00, 248.90));       // Standard
+        ltdA.put(2, new LuftfahrtAllowance(7.30, 21.90, 5.33, 248.90));       // nach einem Jahr
+        luftfahrtAllowanceData.put(6, ltdA);
     }
 
     private void initializeViews() {
@@ -321,6 +400,8 @@ public class MainActivity extends AppCompatActivity {
         spinnerFunktionsgruppe = findViewById(R.id.spinnerFunktionsgruppe);
         spinnerFunktionsstufe = findViewById(R.id.spinnerFunktionsstufe);
         spinnerLuftfahrttechniker = findViewById(R.id.spinnerLuftfahrttechniker);
+        spinnerLuftfahrtDetail = findViewById(R.id.spinnerLuftfahrtDetail);
+        tvLuftfahrtDetail = findViewById(R.id.tvLuftfahrtDetail);
         btnBerechnen = findViewById(R.id.btnBerechnen);
         cardResults = findViewById(R.id.cardResults);
         tvGrundgehalt = findViewById(R.id.tvGrundgehalt);
@@ -395,6 +476,18 @@ public class MainActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        // Update Luftfahrt-Detail based on Luftfahrttechniker selection
+        spinnerLuftfahrttechniker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateLuftfahrtDetailSpinner(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
     private void updateFunktionsgruppeSpinner(int ubergruppePosition) {
@@ -426,6 +519,44 @@ public class MainActivity extends AppCompatActivity {
         spinnerFunktionsstufe.setSelection(0);
     }
 
+    private void updateLuftfahrtDetailSpinner(int luftfahrtPosition) {
+        ArrayAdapter<CharSequence> adapter;
+
+        switch (luftfahrtPosition) {
+            case 1: // Assistenzdienst
+                adapter = ArrayAdapter.createFromResource(this,
+                        R.array.luft_assistenz, android.R.layout.simple_spinner_item);
+                tvLuftfahrtDetail.setVisibility(View.VISIBLE);
+                spinnerLuftfahrtDetail.setVisibility(View.VISIBLE);
+                break;
+            case 2: // Wart (MLuFWart)
+            case 3: // Wart I (MLuFWart I. Kl)
+            case 4: // Luftfahrtmeister (MLuFMst)
+                adapter = ArrayAdapter.createFromResource(this,
+                        R.array.luft_wart, android.R.layout.simple_spinner_item);
+                tvLuftfahrtDetail.setVisibility(View.VISIBLE);
+                spinnerLuftfahrtDetail.setVisibility(View.VISIBLE);
+                break;
+            case 5: // Ltd Dienst B wertig
+            case 6: // Ltd Dienst A wertig
+                adapter = ArrayAdapter.createFromResource(this,
+                        R.array.luft_ltd, android.R.layout.simple_spinner_item);
+                tvLuftfahrtDetail.setVisibility(View.VISIBLE);
+                spinnerLuftfahrtDetail.setVisibility(View.VISIBLE);
+                break;
+            default: // Keine
+                adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
+                adapter.add("Keine");
+                tvLuftfahrtDetail.setVisibility(View.GONE);
+                spinnerLuftfahrtDetail.setVisibility(View.GONE);
+                break;
+        }
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLuftfahrtDetail.setAdapter(adapter);
+        spinnerLuftfahrtDetail.setSelection(0);
+    }
+
     private void calculateSalary() {
         // Get selections
         int verwendungPosition = spinnerVerwendungsgruppe.getSelectedItemPosition();
@@ -434,6 +565,7 @@ public class MainActivity extends AppCompatActivity {
         int funktionsgruppePosition = spinnerFunktionsgruppe.getSelectedItemPosition();
         int funktionsstufePosition = spinnerFunktionsstufe.getSelectedItemPosition();
         int luftfahrtPosition = spinnerLuftfahrttechniker.getSelectedItemPosition();
+        int luftfahrtDetailPosition = spinnerLuftfahrtDetail.getSelectedItemPosition();
 
         // Validate selections
         if (verwendungPosition == 0 || gehaltPosition == 0) {
@@ -472,8 +604,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Get Luftfahrttechniker allowance
         double nebengebuehren = 0.0;
-        if (luftfahrtAllowanceData.containsKey(luftfahrtPosition)) {
-            nebengebuehren = luftfahrtAllowanceData.get(luftfahrtPosition);
+        if (luftfahrtPosition > 0 && luftfahrtDetailPosition > 0) {
+            if (luftfahrtAllowanceData.containsKey(luftfahrtPosition)) {
+                Map<Integer, LuftfahrtAllowance> details = luftfahrtAllowanceData.get(luftfahrtPosition);
+                if (details.containsKey(luftfahrtDetailPosition)) {
+                    LuftfahrtAllowance allowance = details.get(luftfahrtDetailPosition);
+                    nebengebuehren = allowance.calculate();
+                }
+            }
         }
 
         // Calculate total

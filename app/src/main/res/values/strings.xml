@@ -13,6 +13,7 @@
     <string name="funktionszulage">Funktionszulage</string>
     <string name="gesamtgehalt">Gesamtgehalt brutto/Monat</string>
     <string name="luftfahrttechniker">Luftfahrttechniker-Nebengebühren</string>
+    <string name="luftfahrttechniker_detail">Detailauswahl</string>
     <string name="waehlen">Bitte wählen...</string>
     <string name="keine">Keine</string>
     <string name="euro">€</string>
@@ -104,6 +105,32 @@
         <item>Wart (MLuFWart)</item>
         <item>Wart I (MLuFWart I. Kl)</item>
         <item>Luftfahrtmeister (MLuFMst)</item>
-        <item>Leitender Dienst (Ltd Dienst)</item>
+        <item>Ltd Dienst B wertig</item>
+        <item>Ltd Dienst A wertig</item>
+    </string-array>
+
+    <string-array name="luft_assistenz">
+        <item>Bitte wählen...</item>
+        <item>ohne Beruf</item>
+        <item>mit Beruf</item>
+    </string-array>
+
+    <string-array name="luft_wart">
+        <item>Bitte wählen...</item>
+        <item>Basis</item>
+        <item>1 Typ</item>
+        <item>2 Typ</item>
+        <item>1 FEW</item>
+        <item>2 FEW</item>
+        <item>1 FEW + 1 Typ</item>
+        <item>1 FEW + 2 Typ</item>
+        <item>2 FEW + 1 Typ</item>
+        <item>2 FEW + 2 Typ</item>
+    </string-array>
+
+    <string-array name="luft_ltd">
+        <item>Bitte wählen...</item>
+        <item>Standard</item>
+        <item>nach einem Jahr</item>
     </string-array>
 </resources>

@@ -201,6 +201,27 @@
                     android:padding="12dp"
                     android:background="@android:drawable/edit_text" />
 
+                <!-- Luftfahrttechniker Detail -->
+                <TextView
+                    android:id="@+id/tvLuftfahrtDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/luftfahrttechniker_detail"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_dark"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone" />
+
+                <Spinner
+                    android:id="@+id/spinnerLuftfahrtDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:padding="12dp"
+                    android:background="@android:drawable/edit_text"
+                    android:visibility="gone" />
+
                 <!-- Calculate Button -->
                 <Button
                     android:id="@+id/btnBerechnen"
