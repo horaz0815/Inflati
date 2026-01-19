@@ -304,15 +304,14 @@ public class MainActivity extends AppCompatActivity {
 
         functionAllowanceData.put("MUO1", muo1);
 
-        // LUFTFAHRTTECHNIKER-NEBENGEBÜHREN
-        // TODO: Konkrete Beträge vom Benutzer erhalten
+        // LUFTFAHRTTECHNIKER-NEBENGEBÜHREN (Vergütung Militär - Stand 01.01.2025)
         luftfahrtAllowanceData = new HashMap<>();
-        luftfahrtAllowanceData.put(0, 0.0);    // Keine
-        luftfahrtAllowanceData.put(1, 0.0);    // Assistenzdienst
-        luftfahrtAllowanceData.put(2, 0.0);    // Wart (MLuFWart)
-        luftfahrtAllowanceData.put(3, 0.0);    // Wart I (MLuFWart I. Kl)
-        luftfahrtAllowanceData.put(4, 0.0);    // Luftfahrtmeister (MLuFMst)
-        luftfahrtAllowanceData.put(5, 0.0);    // Leitender Dienst (Ltd Dienst)
+        luftfahrtAllowanceData.put(0, 0.0);      // Keine
+        luftfahrtAllowanceData.put(1, 29.40);    // Assistenzdienst (mit Beruf)
+        luftfahrtAllowanceData.put(2, 102.20);   // Wart (MLuFWart)
+        luftfahrtAllowanceData.put(3, 276.90);   // Wart I (MLuFWart I. Kl)
+        luftfahrtAllowanceData.put(4, 437.80);   // Luftfahrtmeister (MLuFMst)
+        luftfahrtAllowanceData.put(5, 335.80);   // Leitender Dienst (Ltd Dienst B wertig)
     }
 
     private void initializeViews() {
