@@ -717,6 +717,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showComparison(SalaryResult salaryB) {
+        if (salaryA == null || salaryB == null) {
+            return;
+        }
+
         // Display Salary A
         tvGrundgehaltA.setText(euroFormat.format(salaryA.grundgehalt));
         tvFunktionszulageA.setText(euroFormat.format(salaryA.funktionszulage));
@@ -728,6 +732,10 @@ public class MainActivity extends AppCompatActivity {
         tvFunktionszulageB.setText(euroFormat.format(salaryB.funktionszulage));
         tvNebengebuehrenB.setText(euroFormat.format(salaryB.nebengebuehren));
         tvGesamtgehaltB.setText(euroFormat.format(salaryB.gesamtgehalt));
+
+        // Force refresh the TextViews
+        tvNebengebuehrenB.invalidate();
+        tvNebengebuehrenB.requestLayout();
 
         // Calculate and display difference (B - A)
         double differenz = salaryB.gesamtgehalt - salaryA.gesamtgehalt;
